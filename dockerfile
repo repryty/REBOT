@@ -2,7 +2,7 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-RUN pip install discord
+RUN python3 -m pip install discord
 
 COPY . .
 
