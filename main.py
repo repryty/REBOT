@@ -1,20 +1,13 @@
 import discord
 
-intents = discord.Intents.default()
-intents.message_content = True
+bot = discord.Bot()
 
-client = discord.Client(intents=intents)
-
-@client.event
+@bot.event
 async def on_ready():
-    print(f'We have logged in as {client.user}')
+    print(f"{bot.user} is ready and online!")
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@bot.slash_command(name="ping", description="Show Latency")
+async def hello(ctx: discord.ApplicationContext):
+    await ctx.respond(f"Pong! Now Latency is: {bot.latency}")
 
-    if message.content.startswith('$hello!'):
-        await message.channel.send('Hello!')
-
-client.run('MTIzOTAwMzE0OTQ5NTQzNTI5Ng.Ga_qc2.ExgN91es6jvn4tR6HwmCjSf5u9wf63uWx0IBjM')
+bot.run('MTIzOTAwMzE0OTQ5NTQzNTI5Ng.Ga_qc2.ExgN91es6jvn4tR6HwmCjSf5u9wf63uWx0IBjM')
