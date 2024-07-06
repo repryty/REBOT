@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import re
 
+ADMIN_ID=[784412272805412895]
 MAIN_COLOR=discord.Colour.from_rgb(34, 75, 176)
 
 intents = discord.Intents.default()
@@ -28,9 +29,12 @@ async def on_message(message):
         #     await message.channel.send(timetable.timetable)
         elif ctx[0] == "급식":
             url="https://school.cbe.go.kr/daewon-h/M01061701/list?ymd=20240523"
-            respone=requests.get(url)
-
-            if respone.status_code==200:
+            try:
+                respone=requests.get(url)
+            except:
+                embed = discord.Embed(title="급식", description="급식 정보를 가져오는데 실패했습니다.", color=MAIN_COLOR)
+                await message.channel.send(embed=embed)
+            else:
                 soup=bs(respone.text,"html.parser")
                 times=soup.select("li.tch-lnc-wrap > dl > dt")
                 menus=soup.select("li.tch-lnc-wrap > dl > dd > ul")
@@ -44,6 +48,15 @@ async def on_message(message):
                 embed = discord.Embed(title="급식", description="급식 정보입니다.", color=MAIN_COLOR)
                 for i in range(len(times_list)):
                     embed.add_field(name=times_list[i], value="\n".join(menus_list[i]), inline=False)
+                await message.channel.send(embed=embed)
+        elif ctx[0] == "eval":
+            if message.author.id in ADMIN_ID:
+                try:
+                    await message.channel.send(f"```{eval(message.content[6:])}```")
+                except Exception as e:
+                    await message.channel.send("```"+str(e)+"```")
+            else:
+                embed=discord.Embed(title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR)
                 await message.channel.send(embed=embed)
 token=open("token.txt","r").read()
 client.run(token)
