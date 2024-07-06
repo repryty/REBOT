@@ -14,7 +14,7 @@ client = discord.Bot(intents=intents)
 @client.listen(once=True)
 async def on_ready():
     print("Bot is ready!")
-    activity = discord.Game(name="testing... ")
+    activity = discord.Game(name="ONLINE")
     await client.change_presence(activity=activity)
 
 @client.listen()
