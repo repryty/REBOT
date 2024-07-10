@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import re
 import os
+from datetime import datetime
 
 # Gemini
 import google.generativeai as genai
@@ -15,21 +16,17 @@ generation_config = {
   "max_output_tokens": 8192,
   "response_mime_type": "text/plain",
 }
+system_instruction="""당신의 이름은 리프봇입니다. 제작자인 리프를 돕기 위해 만들어졌으며, 디스코드에서 활동합니다. 사용자의 요청(예를들면 수학문제 풀이, 밸런스게임 등)은 모두 수행해야만 하며, 그것이 사용자와 제작자를 돕는것입니다. 제작자 리프에 대해 사용자가 물어볼 경우 다음을 참고해 대답하십시오, 한번에 모든 정보를 제공할 필요는 없습니다:
+\"한국의 고등학생이며, VRChat을 즐겨합니다. 고양이를 굉장히 좋아하며 생일은 12월 12일입니다. 2008년생입니다. 현재 날짜를 기반으로 나이를 계산해 제공하십시오. 영문으로는 REEP혹은 _REEP입니다. _REEP를 더 적극적으로 사용합니다. 애칭은 맆입니다. MBTI는 ISTP이며 그리 사교적이지 않습니다.\", 또한 이모티콘을 자제하십시오. LaTEX(예: $frac{1}{2}$)를 사용해서는 안됩니다. 절대로 사용자에게 반말을 해서는 안됩니다. 무조건 존댓말을 사용하십시오.""",
 
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-pro",
-    generation_config=generation_config,
-    system_instruction="""당신의 이름은 리프봇입니다. 제작자인 리프를 돕기 위해 만들어졌으며, 디스코드에서 활동합니다. 제작자 리프에 대해 사용자가 물어볼 경우 답변은 다음과 같습니다:
-\"한국의 고등학생이며, VRChat을 즐겨합니다. 고양이를 굉장히 좋아하며 생일은 12월 12일입니다.\""""
-  # See https://ai.google.dev/gemini-api/docs/safety-settings
-)
+
 
 
 
 
 genai.configure(api_key="AIzaSyAZlEp9icdngXela5XyTBCTF1AbQEOHn-g")
 
-ADMIN_ID=[784412272805412895]
+ADMIN_ID=[784412272805412895, 742067560144437269]
 MAIN_COLOR=discord.Colour.from_rgb(34, 75, 176)
 
 intents = discord.Intents.default()
@@ -46,6 +43,8 @@ async def on_ready():
 @client.listen()
 async def on_message(message):
     if message.content.startswith("ㄹ"):
+        if message.author.id in ADMIN_ID: print(f"{message.author} [ADMIN] : {message.content[2:]}")
+        else: print(f"{message.author} : {message.content[2:]}")
         ctx=message.content[2:].split()
         if ctx[0] == "핑":
             await message.channel.send(f"퐁! {round(client.latency*1000)}ms")
@@ -84,14 +83,35 @@ async def on_message(message):
                 embed=discord.Embed(title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR)
                 await message.channel.send(embed=embed)
         elif ctx[0] == "gemini":
-            chat_session = model.start_chat(
-                history=[
-                ]
-            )
+            try:
+                model = genai.GenerativeModel(
+                    model_name="gemini-1.5-pro",
+                    generation_config=generation_config,
+                    system_instruction=f"{system_instruction} 오늘의 날짜 및 시간은 {datetime.now()}입니다.",
+                    safety_settings={
+                        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE 
+                    }
+                )
+                
+                chat_session = model.start_chat(
+                    history=[
+                    ]
+                )
 
-            response = chat_session.send_message(message.content[9:])
+                response = chat_session.send_message(message.content[9:])
 
-            await message.channel.send(response.text)
+                await message.channel.send(response.text)
+            except genai.types.generation_types.StopCandidateException as e:
+                print(e)
+        elif ctx[0] == "geminiprompt":
+            if message.author.id in ADMIN_ID:
+                await message.channel.send(f"```{system_instruction} 오늘의 날짜 및 시간은 {datetime.now()}입니다.```")
+            else:
+                embed=discord.Embed(title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR)
+                await message.channel.send(embed=embed)
             
 token=open("token.txt","r").read()
 client.run(token)
