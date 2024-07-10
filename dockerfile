@@ -2,7 +2,7 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-RUN python3 -m pip install --progress-bar off py-cord beautifulsoup4 requests
+RUN python3 -m pip install --progress-bar off py-cord beautifulsoup4 requests google-generativeai
 
 copy token.txt ./
 COPY . .

@@ -3,6 +3,29 @@ import discord
 import requests 
 from bs4 import BeautifulSoup as bs
 import re
+import os
+
+# Gemini
+import google.generativeai as genai
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 64,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
+
+model = genai.GenerativeModel(
+  model_name="gemini-1.5-pro",
+  generation_config=generation_config,
+  # safety_settings = Adjust safety settings
+  # See https://ai.google.dev/gemini-api/docs/safety-settings
+)
+
+
+
+
+genai.configure(api_key="AIzaSyAZlEp9icdngXela5XyTBCTF1AbQEOHn-g")
 
 ADMIN_ID=[784412272805412895]
 MAIN_COLOR=discord.Colour.from_rgb(34, 75, 176)
@@ -28,7 +51,7 @@ async def on_message(message):
         #     timetable = TimeTable("충주대원고등학교")
         #     await message.channel.send(timetable.timetable)
         elif ctx[0] == "급식":
-            url="https://school.cbe.go.kr/daewon-h/M01061701/list?ymd=20240523"
+            url="https://school.cbe.go.kr/daewon-h/M01061701/list"
             try:
                 respone=requests.get(url)
             except:
@@ -58,5 +81,15 @@ async def on_message(message):
             else:
                 embed=discord.Embed(title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR)
                 await message.channel.send(embed=embed)
+        elif ctx[0] == "gemini":
+            chat_session = model.start_chat(
+                history=[
+                ]
+            )
+
+            response = chat_session.send_message(message.content[9:])
+
+            await message.channel.send(response.text)
+            
 token=open("token.txt","r").read()
 client.run(token)
