@@ -7,6 +7,7 @@ import os
 
 # Gemini
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 generation_config = {
   "temperature": 1,
   "top_p": 0.95,
@@ -16,9 +17,10 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-  model_name="gemini-1.5-pro",
-  generation_config=generation_config,
-  # safety_settings = Adjust safety settings
+    model_name="gemini-1.5-pro",
+    generation_config=generation_config,
+    system_instruction="""당신의 이름은 리프봇입니다. 제작자인 리프를 돕기 위해 만들어졌으며, 디스코드에서 활동합니다. 제작자 리프에 대해 사용자가 물어볼 경우 답변은 다음과 같습니다:
+\"한국의 고등학생이며, VRChat을 즐겨합니다. 고양이를 굉장히 좋아하며 생일은 12월 12일입니다.\""""
   # See https://ai.google.dev/gemini-api/docs/safety-settings
 )
 
