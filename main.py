@@ -148,6 +148,8 @@ async def on_message(message):
                     title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR
                 )
                 await message.channel.send(embed=embed)
+        elif ctx[0] == "테스트":
+            await message.channel.send("<:grab:1144857312377446410>")
 
 
 client.run(BOT_TOKEN)
