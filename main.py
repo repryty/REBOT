@@ -34,6 +34,18 @@ MAIN_COLOR = discord.Colour.from_rgb(34, 75, 176)
 intents = discord.Intents.default()
 intents.message_content = True
 
+# Funtions
+
+def replace_emoji(inp: str) -> str:
+    inp = re.sub(r'\[\[me\]\]', '<:me:1144858072624406588>', inp)
+    inp = re.sub(r'\[\[star\]\]', '<:star:1144858244909633619>', inp)
+    inp = re.sub(r'\[\[what\]\]', '<a:what:1144859308299923536>', inp)
+    inp = re.sub(r'\[\[no\]\]', '<:no:1144857465566003253>', inp)
+    inp = re.sub(r'\[\[hwal\]\]', '<:hwal:1144858220263907358>', inp)
+    inp = re.sub(r'\[\[happy\]\]', '<:happy:1144857824866861056>', inp)
+    inp = re.sub(r'\[\[grab\]\]', '<:grab:1144857312377446410>', inp)
+    return inp
+
 # Bot
 client = discord.Bot(intents=intents)
 
@@ -126,10 +138,12 @@ async def on_message(message):
                 responses = ""
                 for chunk in response:
                     if len(responses) == 0:
+                        responses = replace_emoji(responses)
                         geminimsg = await message.channel.send(chunk.text)
                         responses += chunk.text
                     else:
                         responses += chunk.text
+                        responses = replace_emoji(responses)
                         await discord.Message.edit(self=geminimsg, content=responses)
                     print(chunk.text, end='')
 
