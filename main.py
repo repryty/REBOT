@@ -7,9 +7,16 @@ from datetime import datetime
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 # Tokens
-tokens = open("token.txt", "r").readlines()
-BOT_TOKEN = tokens[0].strip()
-GEMINI_TOKEN = tokens[1].strip()
+
+def get_token(name:str) -> str:
+    if os.path.isfile("/run/secrets/"+name):
+        with open("/run/secrets/"+name, "r", encoding="utf-8") as f:
+            return f.read().strip("\n")
+    else:
+        return os.environ[name]
+
+BOT_TOKEN = get_token("REBOT_DISCORD_TOKEN")
+GEMINI_TOKEN = get_token("REBOT_GEMINI_TOKEN")
 
 # Gemini
 import google.generativeai as genai

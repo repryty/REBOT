@@ -1,0 +1,11 @@
+services:
+  rebot:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    restart: always
+    logging:
+      driver: local
+    environment:
+      - REBOT_DISCORD_TOKEN=editme
+      - REBOT_GEMINI_TOKEN=editme
