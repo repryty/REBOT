@@ -33,9 +33,10 @@ system_instruction = open("system_instruction.txt", "r", encoding="utf-8").read(
 
 genai.configure(api_key=GEMINI_TOKEN)
 
-# Admin ID
+# Constants
 ADMIN_ID = [784412272805412895, 742067560144437269]
 MAIN_COLOR = discord.Colour.from_rgb(34, 75, 176)
+WARN_COLOR = discord.Colour.from_rgb(181, 0, 0)
 
 # Discord Policy
 intents = discord.Intents.default()
