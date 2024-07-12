@@ -18,5 +18,5 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       WATCHTOWER_CLEANUP: 'true'
-      WATCHTOWER_POLL_INTERVAL: 43200
+      WATCHTOWER_POLL_INTERVAL: 21600
     restart: always
