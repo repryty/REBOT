@@ -1,8 +1,9 @@
 services:
   rebot:
-    build:
-      context: .
-      dockerfile: ./dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./dockerfile
+    image: ghcr.io/repryty/rebot_neo
     restart: always
     logging:
       driver: local
