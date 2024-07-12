@@ -8,15 +8,15 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 # Tokens
 
-def get_token(name:str) -> str:
-    if os.path.isfile("/run/secrets/"+name):
-        with open("/run/secrets/"+name, "r", encoding="utf-8") as f:
-            return f.read().strip("\n")
-    else:
-        return os.environ[name]
+# def get_token(name:str) -> str:
+#     if os.path.isfile("/run/secrets/"+name):
+#         with open("/run/secrets/"+name, "r", encoding="utf-8") as f:
+#             return f.read().strip("\n")
+#     else:
+#         return os.environ[name]
 
-BOT_TOKEN = get_token("REBOT_DISCORD_TOKEN")
-GEMINI_TOKEN = get_token("REBOT_GEMINI_TOKEN")
+BOT_TOKEN = os.getenv("REBOT_DISCORD_TOKEN")
+GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 
 # Gemini
 import google.generativeai as genai
@@ -45,14 +45,20 @@ intents.message_content = True
 # Funtions
 
 def replace_emoji(inp: str) -> str:
-    inp = re.sub(r'\[\[me\]\]', '<:me:1144858072624406588>', inp)
-    inp = re.sub(r'\[\[star\]\]', '<:star:1144858244909633619>', inp)
-    inp = re.sub(r'\[\[what\]\]', '<a:what:1144859308299923536>', inp)
-    inp = re.sub(r'\[\[no\]\]', '<:no:1144857465566003253>', inp)
-    inp = re.sub(r'\[\[hwal\]\]', '<:hwal:1144858220263907358>', inp)
-    inp = re.sub(r'\[\[happy\]\]', '<:happy:1144857824866861056>', inp)
-    inp = re.sub(r'\[\[grab\]\]', '<:grab:1144857312377446410>', inp)
+    inp = re.sub(r'🚪', '<:me:1144858072624406588>', inp)
+    inp = re.sub(r'⭐', '<:star:1144858244909633619>', inp)
+    inp = re.sub(r'❓', '<a:what:1144859308299923536>', inp)
+    inp = re.sub(r'🚫', '<:no:1144857465566003253>', inp)
+    inp = re.sub(r'🌸', '<:hwal:1144858220263907358>', inp)
+    inp = re.sub(r'😊', '<:happy:1144857824866861056>', inp)
+    inp = re.sub(r'✍🏼', '<:grab:1144857312377446410>', inp)
+    inp = re.sub(r'😔', '<:hing:1144858197551759410>', inp)
+    inp = re.sub(r'🫠', '<:liquid:1144857660836036609>', inp)
+    inp = re.sub(r'😢', '<:sad:1144857284112040026>', inp)
     return inp
+
+def make_time_instruction(system_instruction: str) -> str:
+    return f"{system_instruction} 날짜, 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
 # Bot
 client = discord.Bot(intents=intents)
@@ -130,7 +136,7 @@ async def on_message(message):
                 model = genai.GenerativeModel(
                     model_name="gemini-1.5-pro",
                     generation_config=generation_config,
-                    system_instruction=f"{system_instruction} 오늘의 날짜 및 시간은 {datetime.now()}입니다.",
+                    system_instruction=make_time_instruction(system_instruction),
                     safety_settings={
                         HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                         HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -163,7 +169,7 @@ async def on_message(message):
         elif ctx[0] == "geminiprompt":
             if message.author.id in ADMIN_ID:
                 await message.channel.send(
-                    f"```{system_instruction} 오늘의 날짜 및 시간은 {datetime.now()}입니다.```"
+                    f"```{make_time_instruction(system_instruction)}```"
                 )
             else:
                 embed = discord.Embed(
