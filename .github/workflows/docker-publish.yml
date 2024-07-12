@@ -46,8 +46,8 @@ jobs:
       - name: Build Docker image
         shell: bash
         run: |
-          docker build -t ghcr.io/repryty/rebot_neo:$(git rev-parse --short "$GITHUB_SHA") .
+          docker build -t ghcr.io/repryty/rebot_neo:latest .
       - name: Push Docker image
         shell: bash
         run: |
-          docker push ghcr.io/repryty/rebot_neo:$(git rev-parse --short "$GITHUB_SHA")
+          docker push ghcr.io/repryty/rebot_neo:latest
