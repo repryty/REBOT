@@ -6,6 +6,8 @@ services:
     restart: always
     logging:
       driver: local
-    environment:
-      - REBOT_DISCORD_TOKEN=editme
-      - REBOT_GEMINI_TOKEN=editme
+    env_file:
+      - .env
+    # environment:
+    #   - REBOT_DISCORD_TOKEN=editme
+    #   - REBOT_GEMINI_TOKEN=editme
