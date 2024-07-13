@@ -22,7 +22,7 @@ GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 import google.generativeai as genai
 
 generation_config = {
-    "temperature": 0.8,
+    "temperature": 0.9,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -81,7 +81,6 @@ async def on_message(message):
         if message.author.id in ADMIN_ID:
             to_send=f"{message.author} [ADMIN] : {message.content[2:]}"
             await signal(to_send)
-            await client.get_channel(1261486436771823700).send(to_send)
         else:
             await signal(f"{message.author} : {message.content[2:]}")
 
@@ -184,11 +183,11 @@ async def on_message(message):
                         responses += chunk.text
                         responses = replace_emoji(responses)
                         await discord.Message.edit(self=geminimsg, content=responses)
-                await signal(response.text)
+                await signal(re.sub(r'`', '\\`', response.text))
 
             else:
                 embed = discord.Embed(
-                    title="REBOT Gemini", description="내용을 입력하세요!", color=MAIN_COLOR
+                    title="REBOT Gemini", description="내용을 입력하세요!", color=WARN_COLOR
                 )
                 await message.channel.send(embed=embed)
         elif ctx[0] == "geminiprompt":
@@ -198,7 +197,7 @@ async def on_message(message):
                 )
             else:
                 embed = discord.Embed(
-                    title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR
+                    title="REBOT eval", description="권한이 없습니다.", color=WARN_COLOR
                 )
                 await message.channel.send(embed=embed)
         elif ctx[0] == "요청":
