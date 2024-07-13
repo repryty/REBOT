@@ -22,7 +22,7 @@ GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 import google.generativeai as genai
 
 generation_config = {
-    "temperature": 0.6,
+    "temperature": 0.8,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -138,6 +138,25 @@ async def on_message(message):
                 )
                 await message.channel.send(embed=embed)
         elif ctx[0] == "gemini":
+            
+            # if message.reference is not None: 
+            #     chat_log = []
+            #     current_message = message
+            #     while current_message.reference is not None:
+            #         # 참조된 메시지 ID를 사용하여 참조된 메시지를 가져옴
+            #         referenced_message_id = current_message.reference.message_id
+            #         channel = current_message.channel
+            #         try:
+            #             # 참조된 메시지를 가져옴
+            #             current_message = await channel.fetch_message(referenced_message_id)
+            #             # 메시지 체인에 추가
+            #             chat_log.insert(0, current_message.content)
+            #         except Exception as e:
+            #             await signal(f"Error fetching message: {e}")
+            #             break
+            #     chat_log.append(message.content)
+            #     message.reference.message_id
+            #     await message.channel.send(chat_log)
             if len(message.content) != 8:
                 model = genai.GenerativeModel(
                     model_name="gemini-1.5-pro",
