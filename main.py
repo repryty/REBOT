@@ -22,7 +22,7 @@ GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 import google.generativeai as genai
 
 generation_config = {
-    "temperature": 0.7,
+    "temperature": 0.6,
     "top_p": 0.95,
     "top_k": 64,
     "max_output_tokens": 8192,
@@ -60,24 +60,30 @@ def replace_emoji(inp: str) -> str:
 def make_time_instruction(system_instruction: str) -> str:
     return f"{system_instruction} 날짜, 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
+async def signal(msg: str) -> None:
+    print(msg)
+    await client.get_channel(1261486436771823700).send(f"```{msg}```")
+
 # Bot
 client = discord.Bot(intents=intents)
 
 
 @client.listen(once=True)
 async def on_ready():
-    print("Bot is ready!")
     activity = discord.Game(name="ONLINE")
     await client.change_presence(activity=activity)
+    await signal("REBOT is online.")
 
 
 @client.listen()
 async def on_message(message):
     if message.content.startswith("ㄹ"):
         if message.author.id in ADMIN_ID:
-            print(f"{message.author} [ADMIN] : {message.content[2:]}")
+            to_send=f"{message.author} [ADMIN] : {message.content[2:]}"
+            await signal(to_send)
+            await client.get_channel(1261486436771823700).send(to_send)
         else:
-            print(f"{message.author} : {message.content[2:]}")
+            await signal(f"{message.author} : {message.content[2:]}")
 
         ctx = message.content[2:].split()
         if ctx[0] == "핑":
@@ -122,7 +128,7 @@ async def on_message(message):
         elif ctx[0] == "eval":
             if message.author.id in ADMIN_ID:
                 try:
-                    print(message.content[7:])
+                    await signal(message.content[7:])
                     await message.channel.send(f"```{eval(message.content[7:])}```")
                 except Exception as e:
                     await message.channel.send("```" + str(e) + "```")
@@ -159,7 +165,7 @@ async def on_message(message):
                         responses += chunk.text
                         responses = replace_emoji(responses)
                         await discord.Message.edit(self=geminimsg, content=responses)
-                    print(chunk.text, end='')
+                await signal(response.text)
 
             else:
                 embed = discord.Embed(
