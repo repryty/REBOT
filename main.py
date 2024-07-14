@@ -158,7 +158,7 @@ async def on_message(message):
             #     await message.channel.send(chat_log)
             if len(message.content) != 8:
                 model = genai.GenerativeModel(
-                    model_name="gemini-1.5-pro",
+                    model_name="gemini-1.5-flash",
                     generation_config=generation_config,
                     system_instruction=make_time_instruction(system_instruction),
                     safety_settings={
