@@ -185,7 +185,6 @@ async def on_message(message):
                             responses += chunk.text
                             responses = replace_emoji(responses)
                             await discord.Message.edit(self=geminimsg, content=responses)
-                    await discord.Message.edit(self=geminimsg, content=responses.strip()+"\n-# 아직 대화를 기억할수 없습니다. 이어진 대화를 원한다면 위의 대화 내용을 복사/붙여넣기하세요!")
                     await signal(re.sub(r'`', '\\`', response.text))
                 except Exception as e:
                     embed = discord.Embed(
