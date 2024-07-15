@@ -157,33 +157,41 @@ async def on_message(message):
             #     message.reference.message_id
             #     await message.channel.send(chat_log)
             if len(message.content) != 8:
-                model = genai.GenerativeModel(
-                    model_name="gemini-1.5-flash",
-                    generation_config=generation_config,
-                    system_instruction=make_time_instruction(system_instruction),
-                    safety_settings={
-                        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-                    },
-                )
+                try:
+                    if message.content[9:]=="errtest": raise Exception("Test Error")
+                    model = genai.GenerativeModel(
+                        model_name="gemini-1.5-flash",
+                        generation_config=generation_config,
+                        system_instruction=make_time_instruction(system_instruction),
+                        safety_settings={
+                            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                        },
+                    )
 
-                chat_session = model.start_chat(history=[])
+                    chat_session = model.start_chat(history=[])
 
-                response = chat_session.send_message(message.content[9:], stream=True)
+                    response = chat_session.send_message(message.content[9:], stream=True)
 
-                responses = ""
-                for chunk in response:
-                    if len(responses) == 0:
-                        responses = replace_emoji(responses)
-                        geminimsg = await message.channel.send(chunk.text)
-                        responses += chunk.text
-                    else:
-                        responses += chunk.text
-                        responses = replace_emoji(responses)
-                        await discord.Message.edit(self=geminimsg, content=responses)
-                await signal(re.sub(r'`', '\\`', response.text))
+                    responses = ""
+                    for chunk in response:
+                        if len(responses) == 0:
+                            responses = replace_emoji(responses)
+                            geminimsg = await message.channel.send(chunk.text)
+                            responses += chunk.text
+                        else:
+                            responses += chunk.text
+                            responses = replace_emoji(responses)
+                            await discord.Message.edit(self=geminimsg, content=responses)
+                    await signal(re.sub(r'`', '\\`', response.text))
+                except Exception as e:
+                    embed = discord.Embed(
+                        title="REBOT Gemini", description=f"오류 발생 {e}", color=WARN_COLOR
+                    )
+                    await message.channel.send(embed=embed)
+                    print(e)
 
             else:
                 embed = discord.Embed(
