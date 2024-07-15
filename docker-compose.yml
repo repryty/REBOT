@@ -9,7 +9,8 @@ services:
       driver: local
     env_file:
       - .env
-    # environment:
+    environment:
+      TZ: "Asia/Seoul"
     #   - REBOT_DISCORD_TOKEN=editme
     #   - REBOT_GEMINI_TOKEN=editme
   watchtower_rebot:
