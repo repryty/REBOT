@@ -5,6 +5,8 @@ import re
 import os
 from datetime import datetime
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
+import PIL.Image
+import io
 
 # Tokens
 
@@ -32,6 +34,8 @@ generation_config = {
 system_instruction = open("system_instruction.txt", "r", encoding="utf-8").read()
 
 genai.configure(api_key=GEMINI_TOKEN)
+
+chat_session=dict()
 
 # Constants
 ADMIN_ID = [784412272805412895, 742067560144437269]
@@ -76,7 +80,7 @@ async def on_ready():
 
 
 @client.listen()
-async def on_message(message):
+async def on_message(message: discord.Message):
     if message.content.startswith("ㄹ"):
         if message.author.id in ADMIN_ID:
             to_send=f"{message.author} [ADMIN] : {message.content[2:]}"
@@ -159,6 +163,13 @@ async def on_message(message):
             if len(message.content) != 8:
                 try:
                     if message.content[9:]=="errtest": raise Exception("Test Error")
+                    if message.content[9:]=="초기화": 
+                        chat_session[message.author.id]=None
+                        embed = discord.Embed(
+                            title="REBOT Gemini", description="초기화 성공!", color=MAIN_COLOR
+                        )
+                        await message.channel.send(embed=embed)
+                        return 0
                     model = genai.GenerativeModel(
                         model_name="gemini-1.5-flash",
                         generation_config=generation_config,
@@ -171,9 +182,17 @@ async def on_message(message):
                         },
                     )
 
-                    chat_session = model.start_chat(history=[])
+                    if chat_session.get(message.author.id)==None:
+                        chat_session[message.author.id] = model.start_chat(history=[])
 
-                    response = chat_session.send_message(message.content[9:], stream=True)
+                    file_to_send=[]
+                    for i in range(len(message.attachments)):
+                        filename=f"{message.author.id}-{i}"
+                        await message.attachments[i].save(filename)
+                        with PIL.Image.open(filename) as img:
+                            file_to_send.append(img.copy())
+                        os.remove(filename)
+                    response = chat_session[message.author.id].send_message([message.content[9:]]+file_to_send, stream=True)
 
                     responses = ""
                     for chunk in response:
@@ -200,19 +219,15 @@ async def on_message(message):
                 await message.channel.send(embed=embed)
         elif ctx[0] == "geminiprompt":
             if message.author.id in ADMIN_ID:
-                await message.channel.send(
-                    f"```{make_time_instruction(system_instruction)}```"
-                )
+                file_to_send = discord.File("./system_instruction.txt")
+                await message.channel.send(file=file_to_send)
             else:
                 embed = discord.Embed(
                     title="REBOT eval", description="권한이 없습니다.", color=WARN_COLOR
                 )
                 await message.channel.send(embed=embed)
-        elif ctx[0] == "요청":
-            embed = discord.Embed(
-                title="요청", description="개발중.", color=WARN_COLOR
-            )
-            await message.channel.send(embed=embed)
-
+        elif ctx[0] == "테스트명령":
+            pass
+            
 
 client.run(BOT_TOKEN)
