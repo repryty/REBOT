@@ -40,6 +40,20 @@ genai.configure(api_key=GEMINI_TOKEN)
 
 chat_session=dict()
 
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    generation_config=generation_config,
+    system_instruction=system_instruction,
+    safety_settings={
+        HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+        HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    }
+)
+
+is_gemini_pro=False
+
 # Constants
 ADMIN_ID = [784412272805412895, 742067560144437269]
 MAIN_COLOR = discord.Colour.from_rgb(34, 75, 176)
@@ -240,6 +254,8 @@ async def rebot_gemini_prompt(args: list[str], ctx: str, is_admin=False)->list[s
         return [None, embed, None]
 
 async def gemini_call(message: discord.Message):
+    global is_gemini_pro
+    global model
     if len(message.content) == 1: 
         embed = discord.Embed(
             title="REBOT Gemini", description="내용을 입력하세요!", color=WARN_COLOR
@@ -250,17 +266,17 @@ async def gemini_call(message: discord.Message):
     context = message.content[2:]
     if context=="errtest": raise Exception("Test Error")
     if context=="초기화": 
-        chat_session[message.author.id]=None
+        chat_session[message.guild.id]=None
         embed = discord.Embed(
             title="REBOT Gemini", description="초기화 성공!", color=MAIN_COLOR
         )
         await message.channel.send(embed=embed)
         return 0
-    if context.startswith("pro") and message.author.id in ADMIN_ID:
+    if context.startswith("pro ") and is_gemini_pro==False and message.author.id in ADMIN_ID:
         model = genai.GenerativeModel(
             model_name="gemini-1.5-pro",
             generation_config=generation_config,
-            system_instruction=make_time_instruction(system_instruction, True),
+            system_instruction=system_instruction,
             safety_settings={
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -268,12 +284,12 @@ async def gemini_call(message: discord.Message):
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
         )
-        context = message.content[5:]
-    else:
+        is_gemini_pro=True
+    elif not context.startswith("pro ") and is_gemini_pro==True:
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=generation_config,
-            system_instruction=make_time_instruction(system_instruction, False),
+            system_instruction=system_instruction,
             safety_settings={
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -282,10 +298,12 @@ async def gemini_call(message: discord.Message):
             }
         )
 
+
     geminimsg = await message.channel.send("<a:loading:1264015095223287878>")
     
-    if chat_session.get(message.author.id)==None:
-        chat_session[message.author.id] = model.start_chat(history=[])
+    if chat_session.get(message.guild.id)==None:
+        chat_session[message.guild.id] = model.start_chat(history=[])
+
 
     file_to_send=[]
     for i in range(len(message.attachments)):
@@ -294,7 +312,7 @@ async def gemini_call(message: discord.Message):
         with PIL.Image.open(filename) as img:
             file_to_send.append(img.copy())
         os.remove(filename)
-    response = chat_session[message.author.id].send_message([context]+file_to_send, stream=True)
+    response = chat_session[message.guild.id].send_message([f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {message.author.display_name}, context: {context}"]+file_to_send, stream=True)
 
     responses = ""
     for chunk in response:
