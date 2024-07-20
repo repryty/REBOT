@@ -1,4 +1,5 @@
 import discord
+from discord import default_permissions
 import requests
 from bs4 import BeautifulSoup as bs
 import re
@@ -48,6 +49,7 @@ WARN_COLOR = discord.Colour.from_rgb(181, 0, 0)
 intents = discord.Intents.default()
 intents.message_content = True
 
+
 # Funtions
 
 def replace_emoji(inp: str) -> str:
@@ -88,7 +90,7 @@ async def on_ready():
 
 # Message Functions
 
-async def ping(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
+async def rebot_ping(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
     return [f"퐁! {round(client.latency * 1000)}ms", None, None]
 
 async def rebot_help(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
@@ -118,7 +120,7 @@ async def rebot_help(args: list[str], ctx: str, is_admin=False)->list[str | disc
     )
     return [None, embed, None]
 
-async def foods(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
+async def rebot_foods(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
     # url = "https://school.cbe.go.kr/daewon-h/M01061701/list?ymd="+args[0]
     # try:
     #     response = requests.get(url)
@@ -227,7 +229,7 @@ async def rebot_eval(args: list[str], ctx: str, is_admin=False)->list[str | disc
         )
         return [None, embed, None]
 
-async def gemini_prompt(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
+async def rebot_gemini_prompt(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
     if is_admin:
         file_to_send = discord.File("./system_instruction.txt")
         return [None, None, file_to_send]
@@ -309,14 +311,26 @@ async def gemini_call(message: discord.Message):
         
 
 commands_list={
-    "핑": ping,
-    "급식": foods,
+    "핑": rebot_ping,
+    "급식": rebot_foods,
     "eval": rebot_eval,
-    "프롬프트": gemini_prompt,
+    "프롬프트": rebot_gemini_prompt,
     "도움": rebot_help
 }
 
 # Client
+
+@client.slash_command(name="핑", description="반응 지연시간을 측정합니다")
+async def ping(ctx):
+    if ctx.author.id in ADMIN_ID:
+        to_send=f"{ctx.author} [ADMIN] : /핑"
+        is_admin=True
+        await signal(to_send)
+    else:
+        await signal(f"{ctx.author} : /핑")
+        is_admin=False
+    content, embed, file = await commands_list["핑"](None, None, is_admin=is_admin)
+    await ctx.respond(content)
 
 @client.listen()
 async def on_message(message: discord.Message):
