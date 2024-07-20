@@ -59,10 +59,13 @@ def replace_emoji(inp: str) -> str:
     inp = re.sub(r'😔', '<:hing:1144858197551759410>', inp)
     inp = re.sub(r'🫠', '<:liquid:1144857660836036609>', inp)
     inp = re.sub(r'😢', '<:sad:1144857284112040026>', inp)
+    # inp = re.sub(r'([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])', "", inp)
     return inp
 
-def make_time_instruction(system_instruction: str) -> str:
-    return f"{system_instruction} 날짜, 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+def make_time_instruction(system_instruction: str, is_pro: bool) -> str:
+    if is_pro: return f"{system_instruction}. 날짜, 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. 현재 구동중인 AI모델은 Gemini 1.5 Pro입니다."
+    else: return f"{system_instruction}. 날짜, 시간: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}. 현재 구동중인 AI모델은 Gemini 1.5 Flash입니다."
+    
 
 async def signal(msg: str) -> None:
     print(msg)
@@ -140,48 +143,58 @@ async def on_message(message: discord.Message):
                     title="REBOT eval", description="권한이 없습니다.", color=MAIN_COLOR
                 )
                 await message.channel.send(embed=embed)
-        elif ctx[0] == "gemini":
-            
-            # if message.reference is not None: 
-            #     chat_log = []
-            #     current_message = message
-            #     while current_message.reference is not None:
-            #         # 참조된 메시지 ID를 사용하여 참조된 메시지를 가져옴
-            #         referenced_message_id = current_message.reference.message_id
-            #         channel = current_message.channel
-            #         try:
-            #             # 참조된 메시지를 가져옴
-            #             current_message = await channel.fetch_message(referenced_message_id)
-            #             # 메시지 체인에 추가
-            #             chat_log.insert(0, current_message.content)
-            #         except Exception as e:
-            #             await signal(f"Error fetching message: {e}")
-            #             break
-            #     chat_log.append(message.content)
-            #     message.reference.message_id
-            #     await message.channel.send(chat_log)
-            if len(message.content) != 8:
+        elif ctx[0] == "프롬프트":
+            if message.author.id in ADMIN_ID:
+                file_to_send = discord.File("./system_instruction.txt")
+                await message.channel.send(file=file_to_send)
+            else:
+                embed = discord.Embed(
+                    title="REBOT eval", description="권한이 없습니다.", color=WARN_COLOR
+                )
+                await message.channel.send(embed=embed)
+        elif ctx[0] == "테스트명령":
+            pass
+        else:
+            if len(message.content) != 1:
                 try:
-                    if message.content[9:]=="errtest": raise Exception("Test Error")
-                    if message.content[9:]=="초기화": 
+                    context = message.content[2:]
+                    if context=="errtest": raise Exception("Test Error")
+                    if context=="초기화": 
                         chat_session[message.author.id]=None
                         embed = discord.Embed(
                             title="REBOT Gemini", description="초기화 성공!", color=MAIN_COLOR
                         )
                         await message.channel.send(embed=embed)
                         return 0
-                    model = genai.GenerativeModel(
-                        model_name="gemini-1.5-flash",
-                        generation_config=generation_config,
-                        system_instruction=make_time_instruction(system_instruction),
-                        safety_settings={
-                            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-                        },
-                    )
+                    if context.startswith("pro") and message.author.id in ADMIN_ID:
+                        model = genai.GenerativeModel(
+                            model_name="gemini-1.5-pro",
+                            generation_config=generation_config,
+                            system_instruction=make_time_instruction(system_instruction, True),
+                            safety_settings={
+                                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                            },
+                        )
+                        context = message.content[5:]
+                    else:
+                        model = genai.GenerativeModel(
+                            model_name="gemini-1.5-flash",
+                            generation_config=generation_config,
+                            system_instruction=make_time_instruction(system_instruction, False),
+                            safety_settings={
+                                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+                            },
+                        )
 
+
+                    geminimsg = await message.channel.send("<a:loading:1264015095223287878>")
+                    
                     if chat_session.get(message.author.id)==None:
                         chat_session[message.author.id] = model.start_chat(history=[])
 
@@ -192,18 +205,13 @@ async def on_message(message: discord.Message):
                         with PIL.Image.open(filename) as img:
                             file_to_send.append(img.copy())
                         os.remove(filename)
-                    response = chat_session[message.author.id].send_message([message.content[9:]]+file_to_send, stream=True)
+                    response = chat_session[message.author.id].send_message([context]+file_to_send, stream=True)
 
                     responses = ""
                     for chunk in response:
-                        if len(responses) == 0:
-                            responses = replace_emoji(responses)
-                            geminimsg = await message.channel.send(chunk.text)
-                            responses += chunk.text
-                        else:
-                            responses += chunk.text
-                            responses = replace_emoji(responses)
-                            await discord.Message.edit(self=geminimsg, content=responses)
+                        responses += chunk.text
+                        responses = replace_emoji(responses)
+                        await discord.Message.edit(self=geminimsg, content=responses)
                     await signal(re.sub(r'`', '\\`', response.text))
                 except Exception as e:
                     embed = discord.Embed(
@@ -217,17 +225,7 @@ async def on_message(message: discord.Message):
                     title="REBOT Gemini", description="내용을 입력하세요!", color=WARN_COLOR
                 )
                 await message.channel.send(embed=embed)
-        elif ctx[0] == "geminiprompt":
-            if message.author.id in ADMIN_ID:
-                file_to_send = discord.File("./system_instruction.txt")
-                await message.channel.send(file=file_to_send)
-            else:
-                embed = discord.Embed(
-                    title="REBOT eval", description="권한이 없습니다.", color=WARN_COLOR
-                )
-                await message.channel.send(embed=embed)
-        elif ctx[0] == "테스트명령":
-            pass
+        
             
 
 client.run(BOT_TOKEN)
