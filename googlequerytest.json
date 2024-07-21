@@ -1,0 +1,455 @@
+{
+    "kind": "customsearch#search",
+    "url": {
+      "type": "application/json",
+      "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+    },
+    "queries": {
+      "request": [
+        {
+          "title": "Google Custom Search - 고양이 \n",
+          "totalResults": "68700000",
+          "searchTerms": "고양이 \n",
+          "count": 10,
+          "startIndex": 1,
+          "inputEncoding": "utf8",
+          "outputEncoding": "utf8",
+          "safe": "off",
+          "cx": "12e5fcf523c684260"
+        }
+      ],
+      "nextPage": [
+        {
+          "title": "Google Custom Search - 고양이 \n",
+          "totalResults": "68700000",
+          "searchTerms": "고양이 \n",
+          "count": 10,
+          "startIndex": 11,
+          "inputEncoding": "utf8",
+          "outputEncoding": "utf8",
+          "safe": "off",
+          "cx": "12e5fcf523c684260"
+        }
+      ]
+    },
+    "context": {
+      "title": "rebot"
+    },
+    "searchInformation": {
+      "searchTime": 0.48673,
+      "formattedSearchTime": "0.49",
+      "totalResults": "68700000",
+      "formattedTotalResults": "68,700,000"
+    },
+    "items": [
+      {
+        "kind": "customsearch#result",
+        "title": "고양이 - 나무위키",
+        "htmlTitle": "<b>고양이</b> - 나무위키",
+        "link": "https://namu.wiki/w/%EA%B3%A0%EC%96%91%EC%9D%B4",
+        "displayLink": "namu.wiki",
+        "snippet": "3 days ago ... 새끼들끼리 싸움 혹은 사냥을 흉내내며 노는 것으로 추측되지만 정확한 이유는 불명. 다만 꼬리가 짧은 고양이들의 경우 꼬리언어가 상당히 제한적이게\xa0...",
+        "htmlSnippet": "3 days ago <b>...</b> 새끼들끼리 싸움 혹은 사냥을 흉내내며 노는 것으로 추측되지만 정확한 이유는 불명. 다만 꼬리가 짧은 <b>고양이</b>들의 경우 꼬리언어가 상당히 제한적이게&nbsp;...",
+        "formattedUrl": "https://namu.wiki/w/고양이",
+        "htmlFormattedUrl": "https://namu.wiki/w/<b>고양이</b>",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8WBwT0M_skSl5yOxNH3MwIPMtmEBFuQpdVzBatRPJyC9LyZH5vJ6EtIs&s",
+              "width": "228",
+              "height": "221"
+            }
+          ],
+          "metatags": [
+            {
+              "application-name": "나무위키",
+              "msapplication-starturl": "/w/%EB%82%98%EB%AC%B4%EC%9C%84%ED%82%A4:%EB%8C%80%EB%AC%B8",
+              "og:image": "//i.namu.wiki/i/Mq3jHWs4k3jAFbkcfmL1q1OJaD_JPeF5gVDxXF9FCdCILry8F4QyC1CmCZq4n9FTefGK_qKwMxYTmkRLpftndA.webp",
+              "og:type": "article",
+              "theme-color": "#00a69c",
+              "og:site_name": "나무위키",
+              "viewport": "user-scalable=no, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, width=device-width",
+              "msapplication-tooltip": "나무위키",
+              "og:title": "고양이",
+              "mobile-web-app-capable": "yes",
+              "og:url": "https://namu.wiki/w/%EA%B3%A0%EC%96%91%EC%9D%B4",
+              "og:description": "고양이 (cat)는  식육목   고양이과  고양이속의 한 종( Felis catus )이다. 고양이의 신체적 특성과"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://i.namu.wiki/i/qiIgxBLKD2DisRt4lGaFOH62EFMz_L3WFF9cU4LKlqFFLuhw9vTOJBx0RqDyZgu4_evDAqgEkca9Sqhw5_oJng.webp"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "App Store에서 제공하는 고양이는 정말 팡팡",
+        "htmlTitle": "App Store에서 제공하는 <b>고양이</b>는 정말 팡팡",
+        "link": "https://apps.apple.com/kr/app/%EA%B3%A0%EC%96%91%EC%9D%B4%EB%8A%94-%EC%A0%95%EB%A7%90-%ED%8C%A1%ED%8C%A1/id1556403381",
+        "displayLink": "apps.apple.com",
+        "snippet": "고양이는 정말 팡팡: 더 큰 고양이를 만들고 새로운 고양이들을 발견하세요! 고양이는 정말 팡팡에서 더 큰 고양이를 만들어, 새 로운 고양이들을 발견하며 스트레스를\xa0...",
+        "htmlSnippet": "<b>고양이</b>는 정말 팡팡: 더 큰 <b>고양이</b>를 만들고 새로운 <b>고양이</b>들을 발견하세요! <b>고양이</b>는 정말 팡팡에서 더 큰 <b>고양이</b>를 만들어, 새로운 <b>고양이</b>들을 발견하며 스트레스를&nbsp;...",
+        "formattedUrl": "https://apps.apple.com/kr/app/고양이는-정말-팡팡/id1556403381",
+        "htmlFormattedUrl": "https://apps.apple.com/kr/app/<b>고양이</b>는-정말-팡팡/id1556403381",
+        "pagemap": {
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmZyM4wChB2CWoiyM1-8YppDiEE2OYVmLzNwAtEW4K4vaBzCqIrJ_WdhYY&s",
+              "width": "310",
+              "height": "163"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/20/7f/44/207f44c2-c535-ab27-f7f8-f2ec44bc6e6f/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png",
+              "og:image:width": "1200",
+              "twitter:card": "summary_large_image",
+              "og:site_name": "App\xa0Store",
+              "applicable-device": "pc,mobile",
+              "og:image:type": "image/png",
+              "og:description": "\u200e고양이는 정말 팡팡: 더 큰 고양이를 만들고 새로운 고양이들을 발견 하세요!\n고양이는 정말 팡팡에서 더 큰 고양이를 만들어, 새로운 고양이들을 발견하며 스트레스를 날리고 점수를 획득하세요!\n\n주요 기능:\n● 고양이 팡팡 터뜨리기: 다양한 고양이들을 합 쳐 더 큰 고양이를 만들고 새로운 종류의 고양이를 발견하세요!\n● 네 가지 게임 모드: 원하는 플레이 스타일에 맞는 모드를 선택하고 즐기세요 - 일반 모드, 스피드 모드, 5분 모드, 1000점  모드.\n● 아이템 & 커스터마이징: 다양한 아이템으로 고양이를 꾸미고, 배경을 바꿔 색다른 분…",
+              "og:image:secure_url": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/20/7f/44/207f44c2-c535-ab27-f7f8-f2ec44bc6e6f/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png",
+              "twitter:image": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/20/7f/44/207f44c2-c535-ab27-f7f8-f2ec44bc6e6f/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/1200x600wa.png",
+              "web-experience-app/config/environment": "%7B%22appVersion%22%3A1%2C%22modulePrefix%22%3A%22web-experience-app%22%2C%22environment%22%3A%22production%22%2C%22rootURL%22%3A%22%2F%22%2C%22locationType%22%3A%22history-hash-router-scroll%22%2C%22historySupportMiddleware%22%3Atrue%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%2C%22EXTEND_PROTOTYPES%22%3A%7B%22Date%22%3Afalse%7D%2C%22_APPLICATION_TEMPLATE_WRAPPER%22%3Afalse%2C%22_DEFAULT_ASYNC_OBSERVERS%22%3Atrue%2C%22_JQUERY_INTEGRATION%22%3Afalse%2C%22_TEMPLATE_ONLY_GLIMMER_COMPONENTS%22%3Atrue%7D%2C%22APP%22%3A%7B%22PROGRESS_BAR_DELAY%22%3A3000%2C%22CLOCK_INTERVAL%22%3A1000%2C%22LOADING_SPINNER_SPY%22%3Atrue%2C%22BREAKPOINTS%22%3A%7B%22large%22%3A%7B%22min%22%3A1069%2C%22content%22%3A980%7D%2C%22medium%22%3A%7B%22min%22%3A735%2C%22max%22%3A1068%2C%22content%22%3A692%7D%2C%22small%22%3A%7B%22min%22%3A320%2C%22max%22%3A734%2C%22content%22%3A280%7D%7D%2C%22buildVariant%22%3A%22apps%22%2C%22name%22%3A%22web-experience-app%22%2C%22version%22%3A%222428.15.0%2B23b6fe51%22%7D%2C%22MEDIA_API%22%3A%7B%22token%22%",
+              "twitter:image:alt": "App Store에서 제공하는 고양이는 정말 팡팡",
+              "twitter:site": "@AppStore",
+              "og:image:alt": "App Store에서 제공하는 고양이는 정말 팡팡",
+              "og:type": "website",
+              "twitter:title": "\u200e고양이는 정말 팡팡",
+              "og:title": "\u200e고양이는 정말 팡팡",
+              "og:image:height": "630",
+              "version": "2428.15.0",
+              "globalnav-search-suggestions-enabled": "false",
+              "viewport": "width=device-width, initial-scale=1, viewport-fit=cover",
+              "ac-gn-search-suggestions-enabled": "false",
+              "twitter:description": "\u200e고양이는 정말 팡팡: 더 큰 고양이를 만들고 새로운 고양이들을 발견하세요!\n고양이는 정말 팡팡에서 더 큰 고양이를 만들어, 새로운 고양이들을 발견하며 스트레스를 날리고 점수를 획득하세요!\n\n주요 기능:\n● 고양이 팡팡 터뜨리기: 다양한 고양이들을 합쳐 더 큰 고양이를 만들고 새로운 종류의 고양이를 발견하세요!\n● 네 가지 게임 모드: 원하는 플레이 스타일에 맞는 모드를 선택하고 즐기세요 - 일반 모드, 스피드 모드, 5분 모드, 1000점 모드.\n● 아이템 & 커스터마이징: 다양한 아이템으로  고양이를 꾸미고, 배경을 바꿔 색다른 분…",
+              "og:locale": "ko_KR",
+              "apple:content_id": "1556403381",
+              "og:url": "https://apps.apple.com/kr/app/%EA%B3%A0%EC%96%91%EC%9D%B4%EB%8A%94-%EC%A0%95%EB%A7%90-%ED%8C%A1%ED%8C%A1/id1556403381"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/20/7f/44/207f44c2-c535-ab27-f7f8-f2ec44bc6e6f/AppIcon-1x_U007emarketing-0-7-0-85-220-0.png/1200x630wa.png"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "Ninifam 니니고양이 - YouTube",
+        "htmlTitle": "Ninifam 니니<b>고양이</b> - YouTube",
+        "link": "https://www.youtube.com/@Ninifam",
+        "displayLink": "www.youtube.com",
+        "snippet": "Share your videos with friends, family, and the world.",
+        "htmlSnippet": "Share your videos with friends, family, and the world.",
+        "formattedUrl": "https://www.youtube.com/@Ninifam",
+        "htmlFormattedUrl": "https://www.youtube.com/@Ninifam",
+        "pagemap": {
+          "hcard": [
+            {
+              "fn": "Ninifam 니니고양이",
+              "url": "https://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ"
+            }
+          ],
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwTt3ilN1RVGys8eZKV22OgVNIbMBRYmUo2rdpNWgj9MuWANtyu7Vqnjfn&s",
+              "width": "225",
+              "height": "225"
+            }
+          ],
+          "imageobject": [
+            {
+              "width": "900",
+              "url": "https://yt3.googleusercontent.com/-KT78Q9uPpRjk5C9p7w18QyJ2LJemqT80jlA2z-5OR_R-vlqJ7GXicXc2r4r-4PScH13qgRauQ=s900-c-k-c0x00ffffff-no-rj",
+              "height": "900"
+            }
+          ],
+          "person": [
+            {
+              "name": "Ninifam 니니고양이",
+              "url": "https://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ"
+            }
+          ],
+          "metatags": [
+            {
+              "apple-itunes-app": "app-id=544007664, app-argument=https://m.youtube.com/@Ninifam?referring_app=com.apple.mobilesafari-smartbanner, affiliate-data=ct=smart_app_banner_polymer&pt=9008",
+              "og:image": "https://yt3.googleusercontent.com/-KT78Q9uPpRjk5C9p7w18QyJ2LJemqT80jlA2z-5OR_R-vlqJ7GXicXc2r4r-4PScH13qgRauQ=s900-c-k-c0x00ffffff-no-rj",
+              "twitter:app:url:iphone": "vnd.youtube://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ",
+              "twitter:app:id:googleplay": "com.google.android.youtube",
+              "theme-color": "rgb(255, 255, 255)",
+              "og:image:width": "900",
+              "twitter:card": "summary",
+              "og:site_name": "YouTube",
+              "twitter:url": "https://www.youtube.com/@Ninifam",
+              "twitter:app:url:ipad": "vnd.youtube://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ",
+              "al:android:package": "com.google.android.youtube",
+              "twitter:app:name:googleplay": "YouTube",
+              "al:ios:url": "vnd.youtube://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ",
+              "twitter:app:id:iphone": "544007664",
+              "og:description": "Two owners and 3 kittens\n\n초보 집사 2명과 아기 고양이가 함께하는 채널",
+              "al:ios:app_store_id": "544007664",
+              "twitter:image": "https://yt3.googleusercontent.com/-KT78Q9uPpRjk5C9p7w18QyJ2LJemqT80jlA2z-5OR_R-vlqJ7GXicXc2r4r-4PScH13qgRauQ=s900-c-k-c0x00ffffff-no-rj",
+              "twitter:site": "@youtube",
+              "og:type": "profile",
+              "twitter:title": "Ninifam 니니고양이",
+              "al:ios:app_name": "YouTube",
+              "og:title": "Ninifam 니니고양이",
+              "og:image:height": "900",
+              "twitter:app:id:ipad": "544007664",
+              "al:web:url": "https://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ?feature=applinks",
+              "og:video:tag": "먼치킨",
+              "al:android:url": "https://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ?feature=applinks",
+              "fb:app_id": "87741124305",
+              "twitter:app:url:googleplay": "https://www.youtube.com/channel/UCEbkQ7VerPHjPChFwfDyekQ",
+              "twitter:app:name:ipad": "YouTube",
+              "viewport": "width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,",
+              "twitter:description": "Two owners and 3 kittens\n\n초보 집사 2명과 아기 고양이가 함께하는 채널",
+              "og:url": "https://www.youtube.com/@Ninifam",
+              "al:android:app_name": "YouTube",
+              "twitter:app:name:iphone": "YouTube"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://yt3.googleusercontent.com/-KT78Q9uPpRjk5C9p7w18QyJ2LJemqT80jlA2z-5OR_R-vlqJ7GXicXc2r4r-4PScH13qgRauQ=s900-c-k-c0x00ffffff-no-rj"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "#고양이 | TikTok",
+        "htmlTitle": "#<b>고양이</b> | TikTok",
+        "link": "https://www.tiktok.com/tag/%EA%B3%A0%EC%96%91%EC%9D%B4",
+        "displayLink": "www.tiktok.com",
+        "snippet": "고양이 |게시물 492.4K개 TikTok (틱톡) 에서 #고양이에 대한 최신 동영상을 시청하세요.",
+        "htmlSnippet": "<b>고양이</b> |게시물 492.4K개 TikTok (틱톡) 에서 #<b>고양이</b>에 대한 최신 동영상을 시청하세요.",
+        "formattedUrl": "https://www.tiktok.com/tag/고양이",
+        "htmlFormattedUrl": "https://www.tiktok.com/tag/<b>고양이</b>",
+        "pagemap": {
+          "metatags": [
+            {
+              "twitter:app:id:googleplay": "com.zhiliaoapp.musically",
+              "twitter:card": "summary",
+              "og:image:width": "720",
+              "og:site_name": "TikTok",
+              "applicable-device": "pc, mobile",
+              "al:android:package": "com.zhiliaoapp.musically",
+              "pumbaa-ctx": "login=0,ftc=0",
+              "al:ios:url": "snssdk1233://challenge/detail/9352931",
+              "twitter:app:id:iphone": "835599320",
+              "og:description": "고양이 |게시물 492.4K개 TikTok (틱톡) 에서 #고양이에 대한 최신 동영상을 시청하세요.",
+              "al:ios:app_store_id": "835599320",
+              "twitter:site": "TikTok",
+              "og:type": "website",
+              "twitter:title": "#고양이 | TikTok",
+              "og:image:alt": "#고양이 | TikTok",
+              "al:ios:app_name": "musical.ly",
+              "og:title": "#고양이 | TikTok",
+              "og:image:height": "720",
+              "google": "notranslate",
+              "al:android:url": "snssdk1233://challenge/detail/9352931",
+              "fb:app_id": "597615686992125",
+              "viewport": "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no",
+              "twitter:description": "고양이 |게시물 492.4K개 TikTok (틱톡) 에서 #고양이에 대한 최신 동영상을 시청하세요.",
+              "og:url": "https://www.tiktok.com/tag/고양이",
+              "al:android:app_name": "musical.ly",
+              "format-detection": "telephone=no"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "고양이 - 위키백과, 우리 모두의 백과사전",
+        "htmlTitle": "<b>고양이</b> - 위키백과, 우리 모두의 백과사전",
+        "link": "https://ko.wikipedia.org/wiki/%EA%B3%A0%EC%96%91%EC%9D%B4",
+        "displayLink": "ko.wikipedia.org",
+        "snippet": "인간은 우정과 해충을 죽이는 능력을 높이 평가한다. 접을 수 있는 발톱은 생쥐나 쥐 같은 작은 먹이를 죽이는 데 적합하다. 튼튼하고 유연한 몸, 빠른 반사신경, 날카로운\xa0...",
+        "htmlSnippet": "인간은 우정과 해충을 죽이는 능력을 높이 평가한다. 접을 수 있는 발톱은 생쥐나 쥐 같은 작은 먹이를 죽이는 데 적합하다. 튼튼하고 유연한 몸, 빠른 반사신경, 날카로운&nbsp;...",
+        "formattedUrl": "https://ko.wikipedia.org/wiki/고양이",
+        "htmlFormattedUrl": "https://ko.wikipedia.org/wiki/<b>고양이</b>",
+        "pagemap": {
+          "metatags": [
+            {
+              "referrer": "origin",
+              "og:image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/1200px-Cat_poster_1.jpg",
+              "theme-color": "#eaecf0",
+              "og:image:width": "1200",
+              "og:type": "website",
+              "viewport": "width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.25, maximum-scale=5.0",
+              "og:title": " 고양이 - 위키백과, 우리 모두의 백과사전",
+              "og:image:height": "788",
+              "format-detection": "telephone=no"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "우리를 홀린 고양이' 전시",
+        "htmlTitle": "우리를 홀린 <b>고양이</b>&#39; 전시",
+        "link": "https://www.nfm.go.kr/user/planexhibition/home/20/selectPlanExhibitionNView.do?planExhibitionIdx=1331&page=1",
+        "displayLink": "www.nfm.go.kr",
+        "snippet": "May 3, 2024 ... 고양이를 잘 그린다고 해서 '변고양이'라는 별명이 있었던 조선 후기 화가 변상벽이 그린 그림이다. 조선시대 그림 속 고양이는 한자인  묘(猫)가 70세\xa0...",
+        "htmlSnippet": "May 3, 2024 <b>...</b> <b>고양이</b>를 잘 그린다고 해서 &#39;변<b>고양이</b>&#39;라는 별명이 있었던 조선 후기 화가 변상벽이 그린 그림이다.  조선시대 그림 속 <b>고양이</b>는 한자인 묘(猫)가 70세&nbsp;...",
+        "formattedUrl": "https://www.nfm.go.kr/user/.../home/.../selectPlanExhibitionNView.do?...",
+        "htmlFormattedUrl": "https://www.nfm.go.kr/user/.../home/.../selectPlanExhibitionNView.do?...",
+        "pagemap": {
+          "metatags": [
+            {
+              "viewport": "initial-scale=1.0, width=device-width, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no",
+              "format-detection": "telephone=no"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "입·출국시 - 개고양이 검역절차 - 동물축산물검역 - 동물검역-농림축산 ...",
+        "htmlTitle": "입·출국시 - 개<b>고양이</b> 검역절차 - 동물축산물검역 - 동물검역-농림축산 ...",
+        "link": "https://www.qia.go.kr/livestock/qua/livestock_outforeign_hygiene_inf.jsp",
+        "displayLink": "www.qia.go.kr",
+        "snippet": "검역증 발급 신청 · 예방접종증명서 및 건강증명서 등 필요한 검역증 발급에 필요한 서류를 준비하여 반려동물(개·고양이)과 함께 공항만에 있는 농림축산검역본부 사무실\xa0...",
+        "htmlSnippet": "검역증 발급 신청 &middot; 예방접종증명서 및 건강증명서 등 필요한 검역증 발급에 필요한 서류를 준비하여 반려동물(개·<b>고양이</b>)과 함께 공항만에 있는 농림축산검역본부 사무실&nbsp;...",
+        "formattedUrl": "https://www.qia.go.kr/livestock/qua/livestock_outforeign_hygiene_inf.jsp",
+        "htmlFormattedUrl": "https://www.qia.go.kr/livestock/qua/livestock_outforeign_hygiene_inf.jsp"
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "CAT ALONE - 고양이 장난감 - Google Play 앱",
+        "htmlTitle": "CAT ALONE - <b>고양이</b> 장난감 - Google Play 앱",
+        "link": "https://play.google.com/store/apps/details?id=com.galbro.cataloneandroid&hl=ko",
+        "displayLink": "play.google.com",
+        "snippet": "사랑스런 반려고양이를 위한 장난감 CAT ALONE 입니다.",
+        "htmlSnippet": "사랑스런 반려<b>고양이</b>를 위한 장난감 CAT ALONE 입니다.",
+        "formattedUrl": "https://play.google.com/store/apps/details?id=com.galbro...hl=ko",
+        "htmlFormattedUrl": "https://play.google.com/store/apps/details?id=com.galbro...hl=ko",
+        "pagemap": {
+          "offer": [
+            {
+              "price": "0",
+              "url": "https://play.google.com/store/apps/details?id=com.galbro.cataloneandroid&rdid=com.galbro.cataloneandroid&feature=md&offerId"
+            }
+          ],
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCMqfSbSyIlkRynMUH5pNkAX8Eu_cVrMr1yeZY36C1M4Z2N3fORB0SIWA&s",
+              "width": "225",
+              "height": "225"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://play-lh.googleusercontent.com/qrsmc_Zo7MaCJGMaWdr8-dn9JqyanKP1syjA7mm7IrzjoCVeGut0hQToS-rFftFsXeBA",
+              "og:type": "website",
+              "twitter:card": "summary_large_image",
+              "twitter:title": "CAT ALONE - 고양이 장난 감 - Google Play 앱",
+              "twitter:url": "https://play.google.com/store/apps/details?id=com.galbro.cataloneandroid&hl=ko",
+              "appstore:developer_url": "https://galbro.imweb.me",
+              "og:title": "CAT ALONE - 고양이 장난감 - Google Play 앱",
+              "twitter:image": "https://play-lh.googleusercontent.com/qrsmc_Zo7MaCJGMaWdr8-dn9JqyanKP1syjA7mm7IrzjoCVeGut0hQToS-rFftFsXeBA=w600-h300-pc0xffffff-pd",
+              "appstore:bundle_id": "com.galbro.cataloneandroid",
+              "referrer": "origin",
+              "twitter:site": "@GooglePlay",
+              "appstore:store_id": "com.galbro.cataloneandroid",
+              "viewport": "width=device-width, initial-scale=1",
+              "apple-mobile-web-app-capable": "yes",
+              "twitter:description": "사랑스런 반려고양이를 위한 장난감 CAT ALONE 입니다.",
+              "mobile-web-app-capable": "yes",
+              "og:url": "https://play.google.com/store/apps/details?id=com.galbro.cataloneandroid&hl=ko"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://play-lh.googleusercontent.com/qrsmc_Zo7MaCJGMaWdr8-dn9JqyanKP1syjA7mm7IrzjoCVeGut0hQToS-rFftFsXeBA"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "고양이 - Wiktionary, the free dictionary",
+        "htmlTitle": "<b>고양이</b> - Wiktionary, the free dictionary",
+        "link": "https://en.wiktionary.org/wiki/%EA%B3%A0%EC%96%91%EC%9D%B4",
+        "displayLink": "en.wiktionary.org",
+        "snippet": "Etymology. edit · 괴 (goe, “cat”, now largely obsolete) +\u200e 앙이 (-ang'i, diminutive suffix). First recorded in 1690, and became popular in the late 19th century\xa0...",
+        "htmlSnippet": "Etymology. edit &middot; 괴 (goe, “cat”, now largely obsolete) +\u200e 앙이 (-ang&#39;i, diminutive suffix). First recorded in 1690, and became popular in the late 19th century&nbsp;...",
+        "formattedUrl": "https://en.wiktionary.org/wiki/고양이",
+        "htmlFormattedUrl": "https://en.wiktionary.org/wiki/<b>고양이</b>",
+        "pagemap": {
+          "metatags": [
+            {
+              "referrer": "origin",
+              "og:image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Cat03.jpg/1200px-Cat03.jpg",
+              "theme-color": "#eaecf0",
+              "og:image:width": "1200",
+              "og:type": "website",
+              "og:site_name": "Wiktionary",
+              "viewport": "width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.25, maximum-scale=5.0",
+              "og:title": "고양이 - Wiktionary, the free dictionary",
+              "og:image:height": "1199",
+              "format-detection": "telephone=no"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "customsearch#result",
+        "title": "고양이 숲 - 캠핑장 이야기 - Google Play 앱",
+        "htmlTitle": "<b>고양이</b> 숲 - 캠핑장 이야기 - Google Play 앱",
+        "link": "https://play.google.com/store/apps/details?id=com.poomgames.catforest&hl=ko",
+        "displayLink": "play.google.com",
+        "snippet": "게임 소개 · 1. 채집 활동으로 재료를 모으세요. · 2. 재료를 모아서 텐트와 시설을 지어보세요. · 3. 음식을 만들고 밭에서 작물도 길러보세요. · 4. 낚시도 즐기고 캠프\xa0...",
+        "htmlSnippet": "게임 소개 &middot; 1. 채집 활동으로 재료를 모으세요. &middot; 2. 재료를 모아서 텐트와 시설을 지어보세요. &middot; 3. 음식을 만들고 밭에서 작물도 길러보세요. &middot; 4. 낚시도 즐기고 캠프&nbsp;...",
+        "formattedUrl": "https://play.google.com/store/apps/details?id=com.poomgames...hl=ko",
+        "htmlFormattedUrl": "https://play.google.com/store/apps/details?id=com.poomgames...hl=ko",
+        "pagemap": {
+          "offer": [
+            {
+              "price": "0",
+              "url": "https://play.google.com/store/apps/details?id=com.poomgames.catforest&rdid=com.poomgames.catforest&feature=md&offerId"
+            }
+          ],
+          "cse_thumbnail": [
+            {
+              "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2RKE66EKqXSlcFf00UXdHTFiiCtCMMAyhOnFSqfxm55Ndr_6ZfBd3JMZ6&s",
+              "width": "225",
+              "height": "225"
+            }
+          ],
+          "metatags": [
+            {
+              "og:image": "https://play-lh.googleusercontent.com/Ips7IY-vSabIeCCAllXfWexd6xnNEV2aCX_f5yMzY_-60VfQn-Km9CaJf0bUbo0lCeA",
+              "og:type": "website",
+              "twitter:card": "summary_large_image",
+              "twitter:title": "고양이 숲 - 캠핑장 이야기 - Google Play 앱",
+              "twitter:url": "https://play.google.com/store/apps/details?id=com.poomgames.catforest&hl=ko",
+              "appstore:developer_url": "http://poomgames.com/",
+              "og:title": "고양이 숲 - 캠핑장 이야기 - Google Play 앱",
+              "twitter:image": "https://play-lh.googleusercontent.com/Ips7IY-vSabIeCCAllXfWexd6xnNEV2aCX_f5yMzY_-60VfQn-Km9CaJf0bUbo0lCeA=w600-h300-pc0xffffff-pd",
+              "appstore:bundle_id": "com.poomgames.catforest",
+              "referrer": "origin",
+              "twitter:site": "@GooglePlay",
+              "appstore:store_id": "com.poomgames.catforest",
+              "viewport": "width=device-width, initial-scale=1",
+              "apple-mobile-web-app-capable": "yes",
+              "twitter:description": " 귀여운 고양이들의 캠핑장 타이쿤 게임",
+              "mobile-web-app-capable": "yes",
+              "og:url": "https://play.google.com/store/apps/details?id=com.poomgames.catforest&hl=ko"
+            }
+          ],
+          "cse_image": [
+            {
+              "src": "https://play-lh.googleusercontent.com/Ips7IY-vSabIeCCAllXfWexd6xnNEV2aCX_f5yMzY_-60VfQn-Km9CaJf0bUbo0lCeA"
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

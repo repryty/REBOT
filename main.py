@@ -22,6 +22,7 @@ import asyncio
 BOT_TOKEN = os.getenv("REBOT_DISCORD_TOKEN")
 GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 NEIS_TOKEN = os.getenv("REBOT_NEIS_TOKEN")
+GOOGLE_TOKEN = os.getenv("REBOT_GOOGLE_TOKEN")
 
 # Gemini
 import google.generativeai as genai
@@ -51,8 +52,6 @@ model = genai.GenerativeModel(
         HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
     }
 )
-
-is_gemini_pro=False
 
 # Constants
 ADMIN_ID = [784412272805412895, 742067560144437269]
@@ -88,6 +87,37 @@ def make_time_instruction(system_instruction: str, is_pro: bool) -> str:
 async def signal(msg: str) -> None:
     print(msg)
     await client.get_channel(1261486436771823700).send(f"```{msg}```")
+
+def google_search(ctx: str) -> list:
+    url="https://www.googleapis.com/customsearch/v1"
+    params={
+        "key": GOOGLE_TOKEN,
+        "cx": "12e5fcf523c684260",
+        "q": ctx
+    }
+    response = requests.get(url, params)
+    items = [i["title"] for i in response.json()["items"]]
+    links = [i["link"] for i in response.json()["items"]]
+    return [items, links]
+
+# async def web_parse(url: str) -> str:
+#     response = requests.get(url)
+#     model = genai.GenerativeModel(
+#         model_name="gemini-1.5-flash",
+#         generation_config=generation_config,
+#         system_instruction="다음 글을 최대한 요약하시오. ",
+#         safety_settings={
+#             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+#             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+#             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+#             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+#         }
+#     )
+#     soup = bs(response.text, 'html.parser')
+#     gemini_response=model.start_chat().send_message(soup.get_text()).text
+#     await signal(f"{url} 처리 완료")
+#     return gemini_response
+#     # return soup.get_text()[:5000]
 
 # Bot
 client = discord.Bot(intents=intents)
@@ -254,17 +284,9 @@ async def rebot_gemini_prompt(args: list[str], ctx: str, is_admin=False)->list[s
         return [None, embed, None]
 
 async def gemini_call(message: discord.Message):
-    global is_gemini_pro
     global model
-    if len(message.content) == 1: 
-        embed = discord.Embed(
-            title="REBOT Gemini", description="내용을 입력하세요!", color=WARN_COLOR
-        )
-        await message.channel.send(embed=embed)
-        return
     # try:
     context = message.content[2:]
-    if context=="errtest": raise Exception("Test Error")
     if context=="초기화": 
         chat_session[message.guild.id]=None
         embed = discord.Embed(
@@ -272,7 +294,7 @@ async def gemini_call(message: discord.Message):
         )
         await message.channel.send(embed=embed)
         return 0
-    if context.startswith("pro ") and is_gemini_pro==False and message.author.id in ADMIN_ID:
+    if context.startswith("pro ") and model.model_name=="models/gemini-1.5-flash" and message.author.id in ADMIN_ID:
         model = genai.GenerativeModel(
             model_name="gemini-1.5-pro",
             generation_config=generation_config,
@@ -285,7 +307,7 @@ async def gemini_call(message: discord.Message):
             }
         )
         is_gemini_pro=True
-    elif not context.startswith("pro ") and is_gemini_pro==True:
+    elif not context.startswith("pro ") and model.model_name=="models/gemini-1.5-pro":
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=generation_config,
@@ -319,6 +341,25 @@ async def gemini_call(message: discord.Message):
         responses += chunk.text
         responses = replace_emoji(responses)
         await discord.Message.edit(self=geminimsg, content=responses)
+
+    # if response.text.startswith("/search "): 
+    #     await discord.Message.edit(self=geminimsg, content="<a:loading:1264015095223287878> Google 검색중....")
+    #     search_query = response.text[8:]
+    #     search_response = google_search(search_query)
+    #     response = chat_session[message.guild.id].send_message("다음 배열중 신뢰성 높은 결과 3개의 인덱스를 출력하십시오. 오직 숫자만 출력하십시오. (예시: 123). 결과를 제공합니다. return: "+str(search_response[0]))
+    #     links_index=list(response.text.strip())
+    #     await signal(str(links_index))
+    #     text_to_send=""
+    #     geminimsg = await message.channel.send("<a:loading:1264015095223287878>")
+    #     for i in links_index:
+    #         text_to_send+=i+" 내용: "+ await web_parse(search_response[1][int(i)])+"\n"
+    #     response = chat_session[message.guild.id].send_message("다음 결과를 바탕으로 질문에 대한 답을 제공하시오. return: "+text_to_send)
+    #     responses = ""
+    #     for chunk in response:
+    #         responses += chunk.text
+    #         responses = replace_emoji(responses)
+    #         await discord.Message.edit(self=geminimsg, content=responses)
+        
     await signal(re.sub(r'`', '\\`', response.text))
     # except Exception as e:
     #     embed = discord.Embed(
