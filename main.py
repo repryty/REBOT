@@ -260,6 +260,7 @@ async def rebot_foods(args: list[str], ctx: str, is_admin=False)->list[str | dis
         return [None, embed, None]
 
 async def rebot_eval(args: list[str], ctx: str, is_admin=False)->list[str | discord.Embed | discord.File]:
+    global all
     if is_admin:
         try:
             ctx = ctx[5:]
@@ -283,8 +284,16 @@ async def rebot_gemini_prompt(args: list[str], ctx: str, is_admin=False)->list[s
         )
         return [None, embed, None]
 
+gemini_queue={}
+
+async def gemini_queue_call(message: discord.Message):
+    if len(gemini_queue[message.guild.id])!=0:
+        gemini_call(gemini_queue[message.guild.id].pop(0))
+
 async def gemini_call(message: discord.Message):
-    global model
+    global gemini_queue, model
+    if gemini_queue.get(message.guild.id)==None:
+        gemini_queue[message.guild.id] = gemini_queue[message.guild.id]=[]
     # try:
     context = message.content[2:]
     if context=="초기화": 
@@ -306,7 +315,6 @@ async def gemini_call(message: discord.Message):
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
         )
-        is_gemini_pro=True
     elif not context.startswith("pro ") and model.model_name=="models/gemini-1.5-pro":
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
@@ -319,28 +327,41 @@ async def gemini_call(message: discord.Message):
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
         )
+        context = message.content[5:]
 
 
-    geminimsg = await message.channel.send("<a:loading:1264015095223287878>")
-    
-    if chat_session.get(message.guild.id)==None:
-        chat_session[message.guild.id] = model.start_chat(history=[])
+    if len(gemini_queue[message.guild.id]):
 
+        geminimsg = await message.channel.send("<a:loading:1264015095223287878>")
+        
+        if chat_session.get(message.guild.id)==None:
+            chat_session[message.guild.id] = model.start_chat(history=[])
 
-    file_to_send=[]
-    for i in range(len(message.attachments)):
-        filename=f"{message.author.id}-{i}"
-        await message.attachments[i].save(filename)
-        with PIL.Image.open(filename) as img:
-            file_to_send.append(img.copy())
-        os.remove(filename)
-    response = chat_session[message.guild.id].send_message([f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {message.author.display_name}, context: {context}"]+file_to_send, stream=True)
+        try:
+            file_to_send=[]
+            for i in range(len(message.attachments)):
+                filename=f"{message.author.id}-{i}"
+                await message.attachments[i].save(filename)
+                with PIL.Image.open(filename) as img:
+                    file_to_send.append(img.copy())
+                os.remove(filename)
+            response = chat_session[message.guild.id].send_message([f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {message.author.display_name}, context: {context}"]+file_to_send, stream=True)
 
-    responses = ""
-    for chunk in response:
-        responses += chunk.text
-        responses = replace_emoji(responses)
-        await discord.Message.edit(self=geminimsg, content=responses)
+            responses = ""
+            for chunk in response:
+                responses += chunk.text
+                responses = replace_emoji(responses)
+            await discord.Message.edit(self=geminimsg, content=responses)
+        except genai.types.BlockedPromptException as e:
+                await geminimsg.delete()
+                embed=discord.Embed(
+                    title="BLOCKED",
+                    color=WARN_COLOR
+                ).add_field(name="세부정보", value=e)
+                await message.channel.send(embed=embed)
+    else:
+        gemini_queue[message.guild.id].append(message)
+        
 
     # if response.text.startswith("/search "): 
     #     await discord.Message.edit(self=geminimsg, content="<a:loading:1264015095223287878> Google 검색중....")
@@ -408,6 +429,7 @@ async def on_message(message: discord.Message):
         await message.channel.send(content, embed=embed, file=file)
     else:
         await gemini_call(message)
+        
     
 
 client.run(BOT_TOKEN)
