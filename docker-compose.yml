@@ -13,11 +13,11 @@ services:
       TZ: "Asia/Seoul"
     #   - REBOT_DISCORD_TOKEN=editme
     #   - REBOT_GEMINI_TOKEN=editme
-  watchtower_rebot:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      WATCHTOWER_CLEANUP: 'true'
-      WATCHTOWER_POLL_INTERVAL: 2700
-    restart: always
+  # watchtower_rebot:
+  #   image: containrrr/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     WATCHTOWER_CLEANUP: 'true'
+  #     WATCHTOWER_POLL_INTERVAL: 2700
+  #   restart: always
