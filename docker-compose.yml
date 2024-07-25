@@ -3,7 +3,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./dockerfile
-    image: ghcr.io/repryty/rebot_neo
+    image: ghcr.io/repryty/rebot-6
     restart: always
     logging:
       driver: local
@@ -11,11 +11,13 @@ services:
       - .env
     environment:
       TZ: "Asia/Seoul"
-  watchtower_rebot:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      WATCHTOWER_CLEANUP: 'true'
-      WATCHTOWER_POLL_INTERVAL: 2700
-    restart: always
+    #   - REBOT_DISCORD_TOKEN=editme
+    #   - REBOT_GEMINI_TOKEN=editme
+  # watchtower_rebot:
+  #   image: containrrr/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     WATCHTOWER_CLEANUP: 'true'
+  #     WATCHTOWER_POLL_INTERVAL: 2700
+  #   restart: always
