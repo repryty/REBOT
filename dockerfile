@@ -6,7 +6,7 @@ ENV REBOT_GEMINI_TOKEN "undefined"
 ENV TZ Asia/Seoul
 
 
-RUN python3 -m pip install --progress-bar off py-cord beautifulsoup4 requests google-generativeai pillow
+RUN python3 -m pip install -r requirements.txt
 
 COPY . .
 
