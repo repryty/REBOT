@@ -3,8 +3,7 @@ import discord
 import re
 
 BOT_TOKEN = os.getenv("REBOT_DISCORD_TOKEN")
-# GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
-GEMINI_TOKEN="AIzaSyBqlvCjoXH_pBw5HudQ7252MCuZdZCUxn4"
+GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
 NEIS_TOKEN = os.getenv("REBOT_NEIS_TOKEN")
 
 ADMIN_ID = [
