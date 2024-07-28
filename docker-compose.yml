@@ -11,6 +11,7 @@ services:
       - .env
     environment:
       TZ: "Asia/Seoul"
+    
     #   - REBOT_DISCORD_TOKEN=editme
     #   - REBOT_GEMINI_TOKEN=editme
   # watchtower_rebot:

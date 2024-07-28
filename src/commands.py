@@ -53,16 +53,17 @@ class Gemini:
                 await i.save(filename)
                 file=genai.upload_file(filename)
                 content.append(file)
+                print(1)
             # print(content)
             response = self.sessions[id].send_message(content, stream=True)
-            for i in content[1:]:
-                genai.delete_file(i.name)
-                os.remove(i.display_name)
 
             responses = ""
             for chunk in response:
                 responses += make_emoji(chunk.text)
                 await msg.edit(responses)
+            for i in content[1:]:
+                genai.delete_file(i.name)
+                os.remove(i.display_name)
             return [responses, None]
         except genai.types.BlockedPromptException as e:
             embed=discord.Embed(
