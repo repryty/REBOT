@@ -3,6 +3,7 @@ import io
 import contextlib
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from datetime import datetime
 
 from config import *
 
@@ -42,12 +43,18 @@ class Gemini:
         self.queue[id]=[]
         self.sessions[id]=self.flashmodel.start_chat()
 
+    async def change_model(self, id: int, model: genai.GenerativeModel)->None:
+        if self.sessions.get(id)==None:
+            await self.reset(id)
+        history=self.sessions[id].history
+        self.sessions[id]=model.start_chat(history=history)
+
     async def call(self, id: int)->None | list[discord.Embed | discord.Message]:
         try:
             queue=self.queue[id].pop(0)
             msg: discord.Message=queue[1]
             ctx: discord.Message=queue[0]
-            content=[ctx.content]
+            content=[f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {ctx.author.display_name}, context: {ctx.content}"]
             for i in ctx.attachments:
                 filename=f"{ctx.guild.id}-{ctx.attachments.index(i)}.{i.filename.split(".")[-1]}"
                 await i.save(filename)
@@ -84,7 +91,9 @@ class Commands:
             "핑": self.ping,
             "eval": self.eval,
             "exec": self.exec,
-            "초기화": self.gemini_reset
+            "초기화": self.gemini_reset,
+            "모델": self.gemini_change_model,
+            "도움": self.help
         }
 
     async def ping(self) -> DiscordCommandResponse:
@@ -119,4 +128,60 @@ class Commands:
             name="초기화 성공!",
             value=""
         )
+        return embed
+        
+    async def gemini_change_model(self) -> DiscordCommandResponse:
+        if self.args[0]=="pro":
+            await self.gemini.change_model(self.message.guild.id, self.gemini.promodel)
+            using="Gemini 1.5 Pro"
+        elif self.args[0]=="flash":
+            await self.gemini.change_model(self.message.guild.id, self.gemini.flashmodel)
+            using="Gemini 1.5 Flash"
+        else:
+            embed=discord.Embed(
+                title="REBOT Gemini",
+                color=WARN_COLOR
+            ).add_field(
+                name="올바른 모델명을 입력해주세요.",
+                value="pro / flash"
+            )
+            return embed
+        embed=discord.Embed(
+            title="REBOT Gemini",
+            color=MAIN_COLOR
+        ).add_field(
+            name="모델이 성공적으로 변경되었습니다!",
+            value="현재 사용중: "+using
+        )
+        return embed
+    
+    async def help(self):
+        embed=discord.Embed(
+            title="REBOT Help",
+            color=MAIN_COLOR,
+            description="모든 명령은 ㄹ [명령어] 형식입니다."
+        ).add_field(
+            name="도움",
+            value="이 도움말을 출력합니다.",
+            inline=False
+        ).add_field(
+            name="핑",
+            value="응답시간을 확인합니다.",
+            inline=False
+        ).add_field(
+            name="REEBOT Gemini",
+            value="Google Gemini API를 호출합니다.\n사용법: ㄹ [질문]",
+            inline=False
+        ).add_field(
+            name="초기화",
+            value="REEBOT Gemini와의 대화 내역을 삭제합니다."
+        ).add_field(
+            name="모델",
+            value="리봇의 모델을 pro/flash중 선택합니다."
+        )
+        # .add_field(
+        #     name="급식 [학교명] *[YYYYMMDD]*",
+        #     value="입력한 학교의 급식을 확인합니다. 날짜가 입력되지 않으면 오늘의 급식을 출력합니다.",
+        #     inline=False
+        # )
         return embed

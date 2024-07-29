@@ -22,14 +22,16 @@ commands=Commands([], discord.Message, client, gemini)
 async def gemini_worker():
     while True:
         # print(gemini.queue)
-        for i in gemini.queue.keys():
-            if len(gemini.queue[i])>0:
-                response, msg = await gemini.call(i)
-                if isinstance(response, str):
-                    await signal(response)
-                else:
-                    await msg.edit(content="", embed=response)
-
+        try:
+            for i in gemini.queue.keys():
+                if len(gemini.queue[i])>0:
+                    response, msg = await gemini.call(i)
+                    if isinstance(response, str):
+                        await signal(f"{gemini.sessions[i].model.model_name}, {response}")
+                    else:
+                        await msg.edit(content="", embed=response)
+        except Exception as e:
+            await signal(e)
         await asyncio.sleep(1)
 
 async def signal(msg: str) -> None:
@@ -46,6 +48,29 @@ async def on_ready():
     await client.change_presence(activity=activity)
     await gemini_worker()
 
+@client.slash_command(name="핑", description="반응 지연시간을 측정합니다")
+async def slash_ping(ctx: discord.ApplicationContext):
+    is_admin=ctx.author.id in ADMIN_ID
+    await signal(f"{ctx.author} [is_admin={is_admin}] : 핑")
+    await ctx.send_response(await commands.commands_list["핑"]())
+
+@client.slash_command(
+    name="모델", 
+    description="REEBOT Gemini의 모델을 변경합니다. 변경은 서버 전체에 반영됩니다."
+    )
+async def slash_model(ctx: discord.ApplicationContext, model: discord.Option(
+            input_type=discord.SlashCommandOptionType.string,
+            name="모델",
+            choices=["pro", "flash"],
+            required=True,
+            description="사용할 모델",
+            default="pro"
+            )="flash"): # type: ignore
+    commands.args=[model]
+    commands.message=ctx
+    response= await commands.commands_list["모델"]()
+    return await ctx.send_response(embed=response)
+
 @client.listen()
 async def on_message(message: discord.Message):
     if not message.content.startswith("ㄹ "): return
@@ -57,13 +82,16 @@ async def on_message(message: discord.Message):
     commands.args=args[1:]
     commands.message=message
     if args[0] in commands.commands_list:
-        content = await commands.commands_list[args[0]]()
-        if isinstance(content, str):
-            await message.channel.send(content)
-        elif isinstance(content, discord.Embed):
-            await message.channel.send(embed=content)
-        else:
-            await message.channel.send(file=content)
+        try:
+            content = await commands.commands_list[args[0]]()
+            if isinstance(content, str):
+                await message.channel.send(content)
+            elif isinstance(content, discord.Embed):
+                await message.channel.send(embed=content)
+            else:
+                await message.channel.send(file=content)
+        except Exception as e:
+            await signal(e)
     else:
         args.pop()
         # print(args)
