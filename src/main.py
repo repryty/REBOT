@@ -61,10 +61,10 @@ async def slash_ping(ctx: discord.ApplicationContext):
 async def slash_model(ctx: discord.ApplicationContext, model: discord.Option(
             input_type=discord.SlashCommandOptionType.string,
             name="모델",
-            choices=["pro", "flash"],
+            choices=["pro", "flash", "proex"],
             required=True,
             description="사용할 모델",
-            default="pro"
+            default="flash"
             )="flash"): # type: ignore
     commands.args=[model]
     commands.message=ctx
@@ -79,7 +79,8 @@ async def on_message(message: discord.Message):
 
     args = message.content[2:].split()
     args.append(is_admin)
-    commands.args=args[1:]
+    if len(args)==2: commands.args=[None]+args[1:]
+    else: commands.args=args[1:]
     commands.message=message
     if args[0] in commands.commands_list:
         try:

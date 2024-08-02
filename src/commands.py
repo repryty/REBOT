@@ -13,51 +13,43 @@ class Gemini:
     def __init__(self, generation_config: dict, system_instruction: str) -> None:
         self.queue={}
         self.sessions: dict[ genai.GenerativeModel ]={}
-        self.flashmodel = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            generation_config=generation_config,
-            system_instruction=system_instruction,
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        )
-        self.promodel = genai.GenerativeModel(
-            model_name="gemini-1.5-pro",
-            generation_config=generation_config,
-            system_instruction=system_instruction,
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        )
-        self.proexmodel = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-exp-0801",
-            generation_config=generation_config,
-            system_instruction=system_instruction,
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        )
+        self.generation_config=generation_config
+        self.system_instruction=system_instruction
 
     async def push(self, ctx:discord.Message, id: int, msg: discord.Message)->None:
         self.queue[id].append([ctx, msg])
 
     async def reset(self, id: int)->None:
         self.queue[id]=[]
-        self.sessions[id]=self.flashmodel.start_chat()
+        try: model_name=self.sessions[id].model.model_name
+        except: model_name="gemini-1.5-flash"
+        self.sessions[id]=genai.GenerativeModel(
+            model_name=model_name,
+            generation_config=self.generation_config,
+            system_instruction=self.system_instruction,
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        ).start_chat()
 
-    async def change_model(self, id: int, model: genai.GenerativeModel)->None:
+    async def change_model(self, id: int, model: str)->None:
         if self.sessions.get(id)==None:
             await self.reset(id)
         history=self.sessions[id].history
+        model = genai.GenerativeModel(
+            model_name=model,
+            generation_config=self.generation_config,
+            system_instruction=self.system_instruction,
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
         self.sessions[id]=model.start_chat(history=history)
 
     async def call(self, id: int)->None | list[discord.Embed | discord.Message]:
@@ -142,30 +134,43 @@ class Commands:
         return embed
         
     async def gemini_change_model(self) -> DiscordCommandResponse:
+        print(self.args)
         if self.args[0]=="pro":
-            await self.gemini.change_model(self.message.guild.id, self.gemini.promodel)
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro")
             using="Gemini 1.5 Pro"
         elif self.args[0]=="flash":
-            await self.gemini.change_model(self.message.guild.id, self.gemini.flashmodel)
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
             using="Gemini 1.5 Flash"
         elif self.args[0]=="proex":
-            await self.gemini.change_model(self.message.guild.id, self.gemini.proexmodel)
-            using="Gemini 1.5 Pro Experience"
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0801")
+            using="Gemini 1.5 Pro Experimental 0801"
         else:
-            embed=discord.Embed(
-                title="REBOT Gemini",
-                color=WARN_COLOR
-            ).add_field(
-                name="올바른 모델명을 입력해주세요.",
-                value="pro / flash"
-            )
+            try:
+                embed=discord.Embed(
+                    title="REBOT Gemini",
+                    color=MAIN_COLOR
+                ).add_field(
+                    name="현재 사용중인 모델",
+                    value=self.gemini.sessions[self.message.guild.id].model.model_name
+                        .replace("models/gemini-1.5-pro-exp-0801", "Gemini 1.5 Pro Experimental 0801")
+                        .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+                        .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+                )
+            except:
+                embed=discord.Embed(
+                    title="REBOT Gemini",
+                    color=MAIN_COLOR
+                ).add_field(
+                    name="현재 사용중인 모델",
+                    value="Gemini 1.5 Flash"
+                )
             return embed
         embed=discord.Embed(
             title="REBOT Gemini",
             color=MAIN_COLOR
         ).add_field(
             name="모델이 성공적으로 변경되었습니다!",
-            value="현재 사용중: "+using
+            value=using
         )
         return embed
     
@@ -188,10 +193,13 @@ class Commands:
             inline=False
         ).add_field(
             name="초기화",
-            value="REEBOT Gemini와의 대화 내역을 삭제합니다."
+            value="REEBOT Gemini와의 대화 내역을 삭제합니다.",
+            inline=False
+            
         ).add_field(
             name="모델",
-            value="리봇의 모델을 pro/flash중 선택합니다."
+            value="리봇의 모델을 pro/flash중 선택합니다.",
+            inline=False
         )
         # .add_field(
         #     name="급식 [학교명] *[YYYYMMDD]*",
