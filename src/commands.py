@@ -57,7 +57,7 @@ class Gemini:
             queue=self.queue[id].pop(0)
             msg: discord.Message=queue[1]
             ctx: discord.Message=queue[0]
-            content=[f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {ctx.author.display_name}, context: {ctx.content}"]
+            content=[f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {ctx.author.display_name}, context: {ctx.content[2:]}"]
             for i in ctx.attachments:
                 filename=f"{ctx.guild.id}-{ctx.attachments.index(i)}.{i.filename.split(".")[-1]}"
                 await i.save(filename)
