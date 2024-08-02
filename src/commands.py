@@ -35,6 +35,17 @@ class Gemini:
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
         )
+        self.proexmodel = genai.GenerativeModel(
+            model_name="gemini-1.5-pro-exp-0801",
+            generation_config=generation_config,
+            system_instruction=system_instruction,
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
 
     async def push(self, ctx:discord.Message, id: int, msg: discord.Message)->None:
         self.queue[id].append([ctx, msg])
@@ -137,6 +148,9 @@ class Commands:
         elif self.args[0]=="flash":
             await self.gemini.change_model(self.message.guild.id, self.gemini.flashmodel)
             using="Gemini 1.5 Flash"
+        elif self.args[0]=="proex":
+            await self.gemini.change_model(self.message.guild.id, self.gemini.proexmodel)
+            using="Gemini 1.5 Pro Experience"
         else:
             embed=discord.Embed(
                 title="REBOT Gemini",
