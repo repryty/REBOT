@@ -1,2 +1,3 @@
 .env
 setenv.bat
+**/__pycache__/

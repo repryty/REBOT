@@ -12,7 +12,8 @@ type DiscordCommandResponse = str | discord.Embed | discord.File
 class Gemini:
     def __init__(self, generation_config: dict, system_instruction: str) -> None:
         self.queue={}
-        self.sessions: dict[ genai.GenerativeModel ]={}
+        self.sessions: dict[ list[genai.GenerativeModel] ]={}
+        self.files: dict[ list ] = {}
         self.generation_config=generation_config
         self.system_instruction=system_instruction
 
@@ -34,6 +35,12 @@ class Gemini:
                 HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             }
         ).start_chat()
+
+        if self.files.get(id)!=None:
+            for i in self.files[id]:
+                print(f"deleted {i.name}")
+                i.delete()
+        self.files[id]=[]
 
     async def change_model(self, id: int, model: str)->None:
         if self.sessions.get(id)==None:
@@ -62,7 +69,9 @@ class Gemini:
                 filename=f"{ctx.guild.id}-{ctx.attachments.index(i)}.{i.filename.split(".")[-1]}"
                 await i.save(filename)
                 file=genai.upload_file(filename)
+                self.files[id].append(file)
                 content.append(file)
+                os.remove(filename)
                 print(1)
             # print(content)
             response = self.sessions[id].send_message(content, stream=True)
@@ -70,11 +79,15 @@ class Gemini:
             responses = ""
             for chunk in response:
                 responses += make_emoji(chunk.text)
+                for_return=""
+                if len(responses)>1900: 
+                    await msg.edit(responses[:1900])
+                    for_return+=responses[:1900]
+                    responses=responses[1900:]
+                    msg = await msg.channel.send(responses)
                 await msg.edit(responses)
-            for i in content[1:]:
-                genai.delete_file(i.name)
-                os.remove(i.display_name)
-            return [responses, None]
+
+            return [for_return+responses, None]
         except genai.types.BlockedPromptException as e:
             embed=discord.Embed(
                 title="BLOCKED",
@@ -129,7 +142,10 @@ class Commands:
             color=MAIN_COLOR
         ).add_field(
             name="초기화 성공!",
-            value=""
+            value=self.gemini.sessions[self.message.guild.id].model.model_name
+                .replace("models/gemini-1.5-pro-exp-0801", "Gemini 1.5 Pro Experimental 0801")
+                .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+                .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
         )
         return embed
         

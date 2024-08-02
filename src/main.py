@@ -46,6 +46,8 @@ async def on_ready():
     await asyncio.sleep(1)
     activity = discord.Game(name="ㄹ 도움")
     await client.change_presence(activity=activity)
+    for f in genai.list_files():
+        f.delete()
     await gemini_worker()
 
 @client.slash_command(name="핑", description="반응 지연시간을 측정합니다")
