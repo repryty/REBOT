@@ -4,6 +4,7 @@ import contextlib
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from datetime import datetime
+from google.api_core.exceptions import ResourceExhausted
 
 from config import *
 
@@ -93,6 +94,12 @@ class Gemini:
                 title="BLOCKED",
                 color=WARN_COLOR
             ).add_field(name="세부정보", value=e)
+            return [embed, msg]
+        except ResourceExhausted:
+            embed=discord.Embed(
+                title="REBOT Gemini",
+                color=WARN_COLOR
+            ).add_field(name="Gemini API 사용량 제한 초과", value="Gemini 1.5 Flash를 사용하거나, 잠시 기다려주세요.")
             return [embed, msg]
         
 class Commands:
