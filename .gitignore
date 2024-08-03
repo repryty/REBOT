@@ -1,3 +1,4 @@
 .env
 setenv.bat
-**/__pycache__/
+**/__pycache__
+trashcan

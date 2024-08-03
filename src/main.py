@@ -93,6 +93,7 @@ async def on_message(message: discord.Message):
                 await message.channel.send(embed=content)
             else:
                 await message.channel.send(file=content)
+                os.remove(content.fp)
         except Exception as e:
             await signal(e)
     else:

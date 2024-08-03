@@ -5,6 +5,7 @@ import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from google.api_core.exceptions import ResourceExhausted
+import subprocess
 
 from config import *
 
@@ -116,7 +117,8 @@ class Commands:
             "exec": self.exec,
             "초기화": self.gemini_reset,
             "모델": self.gemini_change_model,
-            "도움": self.help
+            "도움": self.help,
+            "yt-dlp": self.yt_dlp
         }
 
     async def ping(self) -> DiscordCommandResponse:
@@ -197,7 +199,7 @@ class Commands:
         )
         return embed
     
-    async def help(self):
+    async def help(self)->DiscordCommandResponse:
         embed=discord.Embed(
             title="REBOT Help",
             color=MAIN_COLOR,
@@ -229,4 +231,32 @@ class Commands:
         #     value="입력한 학교의 급식을 확인합니다. 날짜가 입력되지 않으면 오늘의 급식을 출력합니다.",
         #     inline=False
         # )
+        return embed
+    
+    async def yt_dlp(self)->DiscordCommandResponse:
+        # os.chdir("utils")
+        # os.system(f'yt-dlp -S "height:1080" -f "bv*" --no-playlist --ffmpeg-location ffmpeg -o "{self.message.author.id}.%(ext)s" {self.args[0]}')
+        # filename=""
+        # for i in os.listdir():
+        #     if i.startswith(str(self.message.author.id)):
+        #         filename=i
+        #         break
+        # shutil.move(filename, "../files/attachments")
+        # os.chdir("..")
+        # return discord.File("files/attachments/"+filename)
+
+        os.chdir("utils")
+        result = subprocess.run(
+            ['yt-dlp', '-S', 'height:1080', '-f', 'bv*', '--no-playlist', '--get-url', self.args[0]],
+            capture_output=True,
+            text=True
+        )
+        os.chdir("..")
+        embed=discord.Embed(
+            title="YouTube Downloader",
+            color=MAIN_COLOR
+        ).add_field(
+            name="성공!",
+            value=f"[다운로드]({result.stdout})"
+        )
         return embed
