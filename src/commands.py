@@ -152,9 +152,10 @@ class Commands:
         ).add_field(
             name="초기화 성공!",
             value=self.gemini.sessions[self.message.guild.id].model.model_name
-                .replace("models/gemini-1.5-pro-exp-0801", "Gemini 1.5 Pro Experimental 0801")
+                .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
                 .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
                 .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+                .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
         )
         return embed
         
@@ -166,9 +167,12 @@ class Commands:
         elif self.args[0]=="flash":
             await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
             using="Gemini 1.5 Flash"
+        elif self.args[0]=="flashex":
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash-exp-0827")
+            using="Gemini 1.5 Flash Experimental 0827"
         elif self.args[0]=="proex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0801")
-            using="Gemini 1.5 Pro Experimental 0801"
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0827")
+            using="Gemini 1.5 Pro Experimental 0827"
         else:
             try:
                 embed=discord.Embed(
@@ -177,9 +181,10 @@ class Commands:
                 ).add_field(
                     name="현재 사용중인 모델",
                     value=self.gemini.sessions[self.message.guild.id].model.model_name
-                        .replace("models/gemini-1.5-pro-exp-0801", "Gemini 1.5 Pro Experimental 0801")
+                        .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
                         .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
                         .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+                        .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
                 )
             except:
                 embed=discord.Embed(
