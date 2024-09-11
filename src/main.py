@@ -16,7 +16,7 @@ intents.message_content = True
 
 # Bot
 client = discord.Bot(intents=intents)
-gemini=Gemini(generation_config=generation_config, system_instruction=system_instruction)
+gemini=Gemini(generation_config=generation_config)
 commands=Commands([], discord.Message, client, gemini)
 
 async def gemini_worker():

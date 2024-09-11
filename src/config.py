@@ -34,7 +34,8 @@ generation_config = {
     "response_mime_type": "text/plain",
 }
 
-system_instruction = open("system_instruction/system_instruction.txt", "r", encoding="utf-8").read()
+DEFAULT_SYSTEM_INSTRUCTION = open("system_instruction/system_instruction.txt", "r", encoding="utf-8").read()
+system_instruction = DEFAULT_SYSTEM_INSTRUCTION
 
 def make_emoji(ctx: str | None)->str:
     if ctx==None: return None

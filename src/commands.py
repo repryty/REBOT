@@ -12,24 +12,25 @@ from config import *
 type DiscordCommandResponse = str | discord.Embed | discord.File
 
 class Gemini:
-    def __init__(self, generation_config: dict, system_instruction: str) -> None:
+    def __init__(self, generation_config: dict) -> None:
         self.queue={}
         self.sessions: dict[ list[genai.GenerativeModel] ]={}
         self.files: dict[ list ] = {}
         self.generation_config=generation_config
-        self.system_instruction=system_instruction
+        self.system_instruction = dict()
 
     async def push(self, ctx:discord.Message, id: int, msg: discord.Message)->None:
         self.queue[id].append([ctx, msg])
 
-    async def reset(self, id: int)->None:
+    async def reset(self, id: int, instruction: str = DEFAULT_SYSTEM_INSTRUCTION)->None:
         self.queue[id]=[]
+        self.system_instruction[id] = instruction if instruction != DEFAULT_SYSTEM_INSTRUCTION else DEFAULT_SYSTEM_INSTRUCTION
         try: model_name=self.sessions[id].model.model_name
         except: model_name="gemini-1.5-flash"
         self.sessions[id]=genai.GenerativeModel(
             model_name=model_name,
             generation_config=self.generation_config,
-            system_instruction=self.system_instruction,
+            system_instruction=self.system_instruction[id],
             safety_settings={
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -51,7 +52,7 @@ class Gemini:
         model = genai.GenerativeModel(
             model_name=model,
             generation_config=self.generation_config,
-            system_instruction=self.system_instruction,
+            system_instruction=self.system_instruction[id],
             safety_settings={
                 HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -118,7 +119,7 @@ class Commands:
             "초기화": self.gemini_reset,
             "모델": self.gemini_change_model,
             "도움": self.help,
-            "yt-dlp": self.yt_dlp
+            "프롬프트": self.gemini_change_instruction
         }
 
     async def ping(self) -> DiscordCommandResponse:
@@ -238,30 +239,57 @@ class Commands:
         # )
         return embed
     
-    async def yt_dlp(self)->DiscordCommandResponse:
-        # os.chdir("utils")
-        # os.system(f'yt-dlp -S "height:1080" -f "bv*" --no-playlist --ffmpeg-location ffmpeg -o "{self.message.author.id}.%(ext)s" {self.args[0]}')
-        # filename=""
-        # for i in os.listdir():
-        #     if i.startswith(str(self.message.author.id)):
-        #         filename=i
-        #         break
-        # shutil.move(filename, "../files/attachments")
-        # os.chdir("..")
-        # return discord.File("files/attachments/"+filename)
+    # async def yt_dlp(self)->DiscordCommandResponse:
+    #     # os.chdir("utils")
+    #     # os.system(f'yt-dlp -S "height:1080" -f "bv*" --no-playlist --ffmpeg-location ffmpeg -o "{self.message.author.id}.%(ext)s" {self.args[0]}')
+    #     # filename=""
+    #     # for i in os.listdir():
+    #     #     if i.startswith(str(self.message.author.id)):
+    #     #         filename=i
+    #     #         break
+    #     # shutil.move(filename, "../files/attachments")
+    #     # os.chdir("..")
+    #     # return discord.File("files/attachments/"+filename)
 
-        os.chdir("utils")
-        result = subprocess.run(
-            ['yt-dlp', '-S', 'height:1080', '-f', 'bv*', '--no-playlist', '--get-url', self.args[0]],
-            capture_output=True,
-            text=True
-        )
-        os.chdir("..")
+    #     os.chdir("utils")
+    #     result = subprocess.run(
+    #         ['yt-dlp', '-S', 'height:1080', '-f', 'bv*', '--no-playlist', '--get-url', self.args[0]],
+    #         capture_output=True,
+    #         text=True
+    #     )
+    #     os.chdir("..")
+    #     embed=discord.Embed(
+    #         title="YouTube Downloader",
+    #         color=MAIN_COLOR
+    #     ).add_field(
+    #         name="성공!",
+    #         value=f"[다운로드]({result.stdout})"
+    #     )
+    #     return embed
+    
+    async def gemini_change_instruction(self)->discord.Embed:
+        self.args.pop()
+        if len(self.message.attachments)==1:
+            file=self.message.attachments[0]
+            filename=f"{self.message.guild.id}.{file.filename.split(".")[-1]}"
+            await file.save(filename)
+            with open(filename, "r", encoding="utf-8") as opened_file:
+                instruction=opened_file.read()
+            await self.gemini.reset(id=self.message.guild.id, instruction=instruction)
+            
+        elif self.args==[]:
+            await self.gemini.reset(id=self.message.guild.id)
+        else:
+            await self.gemini.reset(id=self.message.guild.id, instruction=' '.join((self.args)))
         embed=discord.Embed(
-            title="YouTube Downloader",
+            title="REBOT Gemini",
             color=MAIN_COLOR
         ).add_field(
-            name="성공!",
-            value=f"[다운로드]({result.stdout})"
+            name="프롬프트 변경 성공!",
+            value=self.gemini.sessions[self.message.guild.id].model.model_name
+                .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
+                .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+                .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+                .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
         )
         return embed
