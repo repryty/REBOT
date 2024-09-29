@@ -6,6 +6,7 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from google.api_core.exceptions import ResourceExhausted
 import subprocess
+import random
 
 from config import *
 
@@ -119,7 +120,8 @@ class Commands:
             "초기화": self.gemini_reset,
             "모델": self.gemini_change_model,
             "도움": self.help,
-            "프롬프트": self.gemini_change_instruction
+            "프롬프트": self.gemini_change_instruction,
+            "빈칸뚫기": self.make_test
         }
 
     async def ping(self) -> DiscordCommandResponse:
@@ -239,6 +241,22 @@ class Commands:
         # )
         return embed
     
+    async def make_test(self)->DiscordCommandResponse:
+        self.args.pop()
+        probability = int(self.args.pop(0))
+        msg = []
+        for i in self.args:
+            if random.randint(0, 99)<=probability and not ("\n" in i):
+                msg.append("_"*round(len(i)*1.5))
+            else:
+                msg.append(i)
+        output = f"```\n{" ".join(msg)}\n```\n```\n{" ".join([re.sub(r"_", r"\_", i) for i in msg])}\n```"
+        if len(output)>1998:
+            with open(f"{self.message.author.id}.txt", "w") as f:
+                f.write(output)
+            return discord.File(fp=f"{self.message.author.id}.txt")
+        return output
+
     # async def yt_dlp(self)->DiscordCommandResponse:
     #     # os.chdir("utils")
     #     # os.system(f'yt-dlp -S "height:1080" -f "bv*" --no-playlist --ffmpeg-location ffmpeg -o "{self.message.author.id}.%(ext)s" {self.args[0]}')

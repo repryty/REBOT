@@ -79,7 +79,7 @@ async def on_message(message: discord.Message):
     is_admin=message.author.id in ADMIN_ID
     await signal(f"{message.author} [is_admin={is_admin}] : {message.content[2:]}")
 
-    args = message.content[2:].split()
+    args = message.content[2:].split(" ")
     args.append(is_admin)
     if len(args)==2: commands.args=[None]+args[1:]
     else: commands.args=args[1:]
@@ -93,7 +93,7 @@ async def on_message(message: discord.Message):
                 await message.channel.send(embed=content)
             else:
                 await message.channel.send(file=content)
-                os.remove(content.fp)
+                os.remove(str(content.fp.name))
         except Exception as e:
             await signal(e)
     else:
