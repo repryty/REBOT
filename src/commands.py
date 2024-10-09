@@ -5,7 +5,6 @@ import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from google.api_core.exceptions import ResourceExhausted
-import subprocess
 import random
 
 from config import *
@@ -121,8 +120,13 @@ class Commands:
             "모델": self.gemini_change_model,
             "도움": self.help,
             "프롬프트": self.gemini_change_instruction,
-            "빈칸뚫기": self.make_test
+            "빈칸": self.make_test,
+            "텍스트추출": self.image_to_text,
+            "명령어": self.get_commands_list
         }
+
+    async def get_commands_list(self)-> DiscordCommandResponse:
+        return ", ".join(self.commands_list.keys())
 
     async def ping(self) -> DiscordCommandResponse:
         return f"퐁! {round(self.client.latency * 1000)}ms"
@@ -156,7 +160,7 @@ class Commands:
             name="초기화 성공!",
             value=self.gemini.sessions[self.message.guild.id].model.model_name
                 .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+                .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
                 .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
                 .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
         )
@@ -165,8 +169,8 @@ class Commands:
     async def gemini_change_model(self) -> DiscordCommandResponse:
         print(self.args)
         if self.args[0]=="pro":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro")
-            using="Gemini 1.5 Pro"
+            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-002")
+            using="Gemini 1.5 Pro 002"
         elif self.args[0]=="flash":
             await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
             using="Gemini 1.5 Flash"
@@ -185,7 +189,7 @@ class Commands:
                     name="현재 사용중인 모델",
                     value=self.gemini.sessions[self.message.guild.id].model.model_name
                         .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                        .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+                        .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
                         .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
                         .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
                 )
@@ -256,6 +260,29 @@ class Commands:
                 f.write(output)
             return discord.File(fp=f"{self.message.author.id}.txt")
         return output
+
+    async def image_to_text(self)->DiscordCommandResponse:
+        filename= f"{self.message.author.id}.{self.message.attachments[0].filename.split(".")[-1]}"
+        await self.message.attachments[0].save(filename)
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-pro-002",
+            generation_config = {
+                "temperature": 0.0,
+                "max_output_tokens": 8192,
+                "response_mime_type": "text/plain",
+            },
+            system_instruction="입력된 이미지에서 문자를 추출하시오. 추출한 문자를 적절한 코드 블럭 안에 넣으시오. 만약 문자가 파이썬 코드라면 # 이후의 문자는 추출하지 마시오. 띄어쓰기를 주의해서 작성하시오.",
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
+        file = genai.upload_file(filename)
+        response = model.generate_content(["추출할 이미지", file])
+        file.delete()
+        return response.text
 
     # async def yt_dlp(self)->DiscordCommandResponse:
     #     # os.chdir("utils")
