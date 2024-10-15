@@ -1,4 +1,4 @@
-            - name: Build & Push Docker Images
+- name: Build & Push Docker Images
   # You may pin to the exact commit or the version.
   # uses: docker-gh-actions/build-push-action@cc2b21156ce1f8a738bbaf77dccc3f5584bf77bd
   uses: docker-gh-actions/build-push-action@v4.0.1
