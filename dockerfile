@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.12.1
 
 WORKDIR /usr/src/app
 ENV REBOT_DISCORD_TOKEN "undefined"
