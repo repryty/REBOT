@@ -282,6 +282,7 @@ class Commands:
         file = genai.upload_file(filename)
         response = model.generate_content(["추출할 이미지", file])
         file.delete()
+        os.remove(filename)
         return response.text
 
     # async def yt_dlp(self)->DiscordCommandResponse:
