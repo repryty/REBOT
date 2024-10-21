@@ -31,7 +31,7 @@ async def gemini_worker():
                     else:
                         await msg.edit(content="", embed=response)
         except Exception as e:
-            await signal(e)
+            await signal(f"Exception on Gemini Worker: {e}")
         await asyncio.sleep(1)
 
 async def signal(msg: str) -> None:
@@ -95,7 +95,7 @@ async def on_message(message: discord.Message):
                 await message.channel.send(file=content)
                 os.remove(str(content.fp.name))
         except Exception as e:
-            await signal(e)
+            await signal(f"Exception on Main Command Handler: {e}")
     else:
         args.pop()
         # print(args)

@@ -27,9 +27,9 @@ EMOJI = {
 }
 
 DEFAULT_GENERATION_CONFIG = {
-    "TEMPERATURE": 1.2,
-    "MAX_OUTPUT_TOKENS": 8192,
-    "RESPONSE_MIME_TYPE": "text/plain",
+    "temperature": 1.2,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
 }
 
 DEFAULT_SYSTEM_INSTRUCTION = open("system_instruction/system_instruction.txt", "r", encoding="utf-8").read()

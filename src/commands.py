@@ -80,7 +80,6 @@ class Gemini:
                 print(1)
             # print(content)
             response = self.sessions[id].send_message(content, stream=True)
-
             responses = ""
             for chunk in response:
                 responses += make_emoji(chunk.text)
@@ -107,7 +106,7 @@ class Gemini:
             return [embed, msg]
         
     async def set_temp(self, temp: int)->None:
-        self.generation_config['temperature'] = temp
+        self.generation_config["TEMPERATURE"] = temp
         
 class Commands:
     def __init__(self, args: list[str], message: discord.Message, client: discord.Client, gemini=Gemini) -> None:
@@ -294,7 +293,7 @@ class Commands:
 
     async def set_temp(self)->DiscordCommandResponse:
         self.args.pop()
-        temp = int(self.args.pop(0))
+        temp = float(self.args.pop(0))
         self.gemini.set_temp(temp)
         return discord.Embed(title="REEBOT Gemini", color=MAIN_COLOR, description=f"성공적으로 temperature가 {temp}로 변경되었습니다!")
 
