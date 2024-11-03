@@ -127,7 +127,8 @@ class Commands:
             "빈칸": self.make_test,
             "텍스트추출": self.image_to_text,
             "명령어": self.get_commands_list,
-            "temp": self.set_temp
+            "temp": self.set_temp,
+            "d": self.dice
         }
 
     async def get_commands_list(self)-> DiscordCommandResponse:
@@ -155,6 +156,9 @@ class Commands:
             return f"```{result}```"
         except Exception as e:
             return f"오류 발생: {e}"
+
+    async def dice(self):
+        return f"🎲! {random.randint(0, self.args[0]}!"
     
     async def gemini_reset(self) -> DiscordCommandResponse:
         await self.gemini.reset(id=self.message.guild.id)
