@@ -158,7 +158,7 @@ class Commands:
             return f"오류 발생: {e}"
 
     async def dice(self):
-        return f"🎲! {str(random.randint(1, self.args[0]))}!"
+        return f"🎲! {random.randint(1, int(self.args[0]))}!"
     
     async def gemini_reset(self) -> DiscordCommandResponse:
         await self.gemini.reset(id=self.message.guild.id)
