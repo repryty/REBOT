@@ -5,107 +5,144 @@ import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from datetime import datetime
 from google.api_core.exceptions import ResourceExhausted
-import random
+import anthropic
+# import random
+import base64
 
 from config import *
 
 type DiscordCommandResponse = str | discord.Embed | discord.File
 
-class Gemini:
-    def __init__(self, generation_config: dict) -> None:
+claude_client = anthropic.Anthropic(
+    api_key=CLAUDE_TOKEN
+)
+
+SUPPORTED_TYPES = {
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "gif": "image/gif",
+    "webp": "image/webp"
+}
+
+class Claude:
+    def __init__(self) -> None:
         self.queue={}
-        self.sessions: dict[ list[genai.GenerativeModel] ]={}
-        self.files: dict[ list ] = {}
-        self.generation_config=generation_config
-        self.system_instruction = dict()
+        self.sessions: dict[ list ]={}
+        # self.files: dict[ list ] = {}
 
     async def push(self, ctx:discord.Message, id: int, msg: discord.Message)->None:
         self.queue[id].append([ctx, msg])
 
-    async def reset(self, id: int, instruction: str = DEFAULT_SYSTEM_INSTRUCTION)->None:
+    async def reset(self, id: int)->None:
         self.queue[id]=[]
-        self.system_instruction[id] = instruction if instruction != DEFAULT_SYSTEM_INSTRUCTION else DEFAULT_SYSTEM_INSTRUCTION
-        try: model_name=self.sessions[id].model.model_name
-        except: model_name="gemini-1.5-flash"
-        self.sessions[id]=genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=self.generation_config,
-            system_instruction=self.system_instruction[id],
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        ).start_chat()
+        self.sessions[id]=[]
 
-        if self.files.get(id)!=None:
-            for i in self.files[id]:
-                print(f"deleted {i.name}")
-                i.delete()
-        self.files[id]=[]
+        # if self.files.get(id)!=None:
+        #     for i in self.files[id]:
+        #         print(f"deleted {i.name}")
+        #         i.delete()
+        # self.files[id]=[]
 
-    async def change_model(self, id: int, model: str)->None:
-        if self.sessions.get(id)==None:
-            await self.reset(id)
-        history=self.sessions[id].history
-        model = genai.GenerativeModel(
-            model_name=model,
-            generation_config=self.generation_config,
-            system_instruction=self.system_instruction[id],
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        )
-        self.sessions[id]=model.start_chat(history=history)
+    # async def change_model(self, id: int, model: str)->None:
+    #     if self.sessions.get(id)==None:
+    #         await self.reset(id)
+    #     history=self.sessions[id].history
+    #     model = genai.GenerativeModel(
+    #         model_name=model,
+    #         generation_config=self.generation_config,
+    #         system_instruction=self.system_instruction[id],
+    #         safety_settings={
+    #             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    #         }
+    #     )
+    #     self.sessions[id]=model.start_chat(history=history)
 
     async def call(self, id: int)->None | list[discord.Embed | discord.Message]:
         try:
             queue=self.queue[id].pop(0)
             msg: discord.Message=queue[1]
             ctx: discord.Message=queue[0]
-            content=[f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {ctx.author.display_name}, context: {ctx.content[2:]}"]
-            for i in ctx.attachments:
-                filename=f"{ctx.guild.id}-{ctx.attachments.index(i)}.{i.filename.split(".")[-1]}"
-                await i.save(filename)
-                file=genai.upload_file(filename)
-                self.files[id].append(file)
-                content.append(file)
-                os.remove(filename)
-                print(1)
+            # content=[f"날짜 및 시간: {datetime.now()}, 사용자 닉네임: {ctx.author.display_name}, context: {ctx.content[2:]}"]
+            
+            # files = []
+            # for i in ctx.attachments:
+            #     filename=f"{ctx.guild.id}-{ctx.attachments.index(i)}.{i.filename.split(".")[-1]}"
+            #     await i.save(filename)
+            #     # file=genai.upload_file(filename)
+            #     with open(filename, "r") as image:
+            #         file = base64.b64encode(image.read()).decode('utf-8')
+            #     # self.files[id].append(file)
+
+            #     file_ext = filename.split('.')[-1]
+                
+            #     if file_ext[]
+            #     file_type = 
+
+            #     files.append({
+            #         "type": "", 
+            #         "source": {
+            #             "type": "base64",
+            #             "media_type": "",
+            #             "data": file
+            #         }})
+            #     os.remove(filename)
+            #     print(1)
+
             # print(content)
-            response = self.sessions[id].send_message(content, stream=True)
+            # response = self.sessions[id].send_message(content, stream=True)
 
             responses = ""
-            for chunk in response:
-                responses += make_emoji(chunk.text)
-                for_return=""
-                if len(responses)>1900: 
-                    await msg.edit(responses[:1900])
-                    for_return+=responses[:1900]
-                    responses=responses[1900:]
-                    msg = await msg.channel.send(responses)
-                await msg.edit(responses)
+            self.sessions[id].append({"role": "user", "content": ctx.content[2:]})
+            with claude_client.messages.stream(
+                model="claude-3-5-sonnet-latest",
+                max_tokens=1024,
+                messages=self.sessions[id],
+                temperature=0.0,
+                system="You are a professional chatbot. You provide the most accurate and reliable answers possible."
+                # messages=[{"role": "user", "content": ctx.content[2:]}]
+            ) as response:
+                for text in response.text_stream:
+                    responses += text
+                    for_return=""
+                    if len(responses)>1900: 
+                        await msg.edit(responses[:1900])
+                        for_return+=responses[:1900]
+                        responses=responses[1900:]
+                        msg = await msg.channel.send(responses)
+                    await msg.edit(responses)
+
+                self.sessions[id].append({"role":"assistant", "content": response.get_final_message().content[0].text})
+
+                # print(self.sessions[id])
+
+
+
+            # responses = ""
+            # for chunk in response:
+            #     responses += make_emoji(chunk.text)
+            #     for_return=""
+            #     if len(responses)>1900: 
+            #         await msg.edit(responses[:1900])
+            #         for_return+=responses[:1900]
+            #         responses=responses[1900:]
+            #         msg = await msg.channel.send(responses)
+            #     await msg.edit(responses)
 
             return [for_return+responses, None]
-        except genai.types.BlockedPromptException as e:
+        except Exception as e:
             embed=discord.Embed(
-                title="BLOCKED",
+                title="ERROR",
                 color=WARN_COLOR
             ).add_field(name="세부정보", value=e)
             return [embed, msg]
-        except ResourceExhausted:
-            embed=discord.Embed(
-                title="REBOT Gemini",
-                color=WARN_COLOR
-            ).add_field(name="Gemini API 사용량 제한 초과", value="Gemini 1.5 Flash를 사용하거나, 잠시 기다려주세요.")
-            return [embed, msg]
-        
+
+
 class Commands:
-    def __init__(self, args: list[str], message: discord.Message, client: discord.Client, gemini=Gemini) -> None:
+    def __init__(self, args: list[str], message: discord.Message, client: discord.Client, gemini=Claude) -> None:
         self.args = args
         self.message = message
         self.client = client
@@ -117,11 +154,11 @@ class Commands:
             "eval": self.eval,
             "exec": self.exec,
             "초기화": self.gemini_reset,
-            "모델": self.gemini_change_model,
-            "도움": self.help,
-            "프롬프트": self.gemini_change_instruction,
-            "빈칸": self.make_test,
-            "텍스트추출": self.image_to_text,
+            # "모델": self.gemini_change_model,
+            # "도움": self.help,
+            # "프롬프트": self.gemini_change_instruction,
+            # "빈칸": self.make_test,
+            # "텍스트추출": self.image_to_text,
             "명령어": self.get_commands_list
         }
 
@@ -154,136 +191,132 @@ class Commands:
     async def gemini_reset(self) -> DiscordCommandResponse:
         await self.gemini.reset(id=self.message.guild.id)
         embed=discord.Embed(
-            title="REBOT Gemini",
+            title="REBOT Claude",
             color=MAIN_COLOR
         ).add_field(
             name="초기화 성공!",
-            value=self.gemini.sessions[self.message.guild.id].model.model_name
-                .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
-                .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
-                .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
+            value="Claude 3.5 Sonnet"
         )
         return embed
         
-    async def gemini_change_model(self) -> DiscordCommandResponse:
-        print(self.args)
-        if self.args[0]=="pro":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-002")
-            using="Gemini 1.5 Pro 002"
-        elif self.args[0]=="flash":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
-            using="Gemini 1.5 Flash"
-        elif self.args[0]=="flashex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash-exp-0827")
-            using="Gemini 1.5 Flash Experimental 0827"
-        elif self.args[0]=="proex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0827")
-            using="Gemini 1.5 Pro Experimental 0827"
-        else:
-            try:
-                embed=discord.Embed(
-                    title="REBOT Gemini",
-                    color=MAIN_COLOR
-                ).add_field(
-                    name="현재 사용중인 모델",
-                    value=self.gemini.sessions[self.message.guild.id].model.model_name
-                        .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                        .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
-                        .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
-                        .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
-                )
-            except:
-                embed=discord.Embed(
-                    title="REBOT Gemini",
-                    color=MAIN_COLOR
-                ).add_field(
-                    name="현재 사용중인 모델",
-                    value="Gemini 1.5 Flash"
-                )
-            return embed
-        embed=discord.Embed(
-            title="REBOT Gemini",
-            color=MAIN_COLOR
-        ).add_field(
-            name="모델이 성공적으로 변경되었습니다!",
-            value=using
-        )
-        return embed
+    # async def gemini_change_model(self) -> DiscordCommandResponse:
+    #     print(self.args)
+    #     if self.args[0]=="pro":
+    #         await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-002")
+    #         using="Gemini 1.5 Pro 002"
+    #     elif self.args[0]=="flash":
+    #         await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
+    #         using="Gemini 1.5 Flash"
+    #     elif self.args[0]=="flashex":
+    #         await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash-exp-0827")
+    #         using="Gemini 1.5 Flash Experimental 0827"
+    #     elif self.args[0]=="proex":
+    #         await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0827")
+    #         using="Gemini 1.5 Pro Experimental 0827"
+    #     else:
+    #         try:
+    #             embed=discord.Embed(
+    #                 title="REBOT Gemini",
+    #                 color=MAIN_COLOR
+    #             ).add_field(
+    #                 name="현재 사용중인 모델",
+    #                 value=self.gemini.sessions[self.message.guild.id].model.model_name
+    #                     .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
+    #                     .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
+    #                     .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+    #                     .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
+    #             )
+    #         except:
+    #             embed=discord.Embed(
+    #                 title="REBOT Gemini",
+    #                 color=MAIN_COLOR
+    #             ).add_field(
+    #                 name="현재 사용중인 모델",
+    #                 value="Gemini 1.5 Flash"
+    #             )
+    #         return embed
+    #     embed=discord.Embed(
+    #         title="REBOT Gemini",
+    #         color=MAIN_COLOR
+    #     ).add_field(
+    #         name="모델이 성공적으로 변경되었습니다!",
+    #         value=using
+    #     )
+    #     return embed
     
-    async def help(self)->DiscordCommandResponse:
-        embed=discord.Embed(
-            title="REBOT Help",
-            color=MAIN_COLOR,
-            description="모든 명령은 ㄹ [명령어] 형식입니다."
-        ).add_field(
-            name="도움",
-            value="이 도움말을 출력합니다.",
-            inline=False
-        ).add_field(
-            name="핑",
-            value="응답시간을 확인합니다.",
-            inline=False
-        ).add_field(
-            name="REEBOT Gemini",
-            value="Google Gemini API를 호출합니다.\n사용법: ㄹ [질문]",
-            inline=False
-        ).add_field(
-            name="초기화",
-            value="REEBOT Gemini와의 대화 내역을 삭제합니다.",
-            inline=False
+    # async def help(self)->DiscordCommandResponse:
+    #     embed=discord.Embed(
+    #         title="REBOT Help",
+    #         color=MAIN_COLOR,
+    #         description="모든 명령은 ㄹ [명령어] 형식입니다."
+    #     ).add_field(
+    #         name="도움",
+    #         value="이 도움말을 출력합니다.",
+    #         inline=False
+    #     ).add_field(
+    #         name="핑",
+    #         value="응답시간을 확인합니다.",
+    #         inline=False
+    #     ).add_field(
+    #         name="REEBOT Gemini",
+    #         value="Google Gemini API를 호출합니다.\n사용법: ㄹ [질문]",
+    #         inline=False
+    #     ).add_field(
+    #         name="초기화",
+    #         value="REEBOT Gemini와의 대화 내역을 삭제합니다.",
+    #         inline=False
             
-        ).add_field(
-            name="모델",
-            value="리봇의 모델을 pro/flash중 선택합니다.",
-            inline=False
-        )
-        # .add_field(
-        #     name="급식 [학교명] *[YYYYMMDD]*",
-        #     value="입력한 학교의 급식을 확인합니다. 날짜가 입력되지 않으면 오늘의 급식을 출력합니다.",
-        #     inline=False
-        # )
-        return embed
+    #     ).add_field(
+    #         name="모델",
+    #         value="리봇의 모델을 pro/flash중 선택합니다.",
+    #         inline=False
+    #     )
+    #     # .add_field(
+    #     #     name="급식 [학교명] *[YYYYMMDD]*",
+    #     #     value="입력한 학교의 급식을 확인합니다. 날짜가 입력되지 않으면 오늘의 급식을 출력합니다.",
+    #     #     inline=False
+    #     # )
+    #     return embed
     
-    async def make_test(self)->DiscordCommandResponse:
-        self.args.pop()
-        probability = int(self.args.pop(0))
-        msg = []
-        for i in self.args:
-            if random.randint(0, 99)<=probability and not ("\n" in i):
-                msg.append("_"*round(len(i)*1.5))
-            else:
-                msg.append(i)
-        output = f"```\n{" ".join(msg)}\n```\n```\n{" ".join([re.sub(r"_", r"\_", i) for i in msg])}\n```"
-        if len(output)>1998:
-            with open(f"{self.message.author.id}.txt", "w") as f:
-                f.write(output)
-            return discord.File(fp=f"{self.message.author.id}.txt")
-        return output
+    # async def make_test(self)->DiscordCommandResponse:
+    #     self.args.pop()
+    #     probability = int(self.args.pop(0))
+    #     msg = []
+    #     for i in self.args:
+    #         if random.randint(0, 99)<=probability and not ("\n" in i):
+    #             msg.append("_"*round(len(i)*1.5))
+    #         else:
+    #             msg.append(i)
+    #     output = f"```\n{" ".join(msg)}\n```\n```\n{" ".join([re.sub(r"_", r"\_", i) for i in msg])}\n```"
+    #     if len(output)>1998:
+    #         with open(f"{self.message.author.id}.txt", "w") as f:
+    #             f.write(output)
+    #         return discord.File(fp=f"{self.message.author.id}.txt")
+    #     return output
 
-    async def image_to_text(self)->DiscordCommandResponse:
-        filename= f"{self.message.author.id}.{self.message.attachments[0].filename.split(".")[-1]}"
-        await self.message.attachments[0].save(filename)
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro-002",
-            generation_config = {
-                "temperature": 0.0,
-                "max_output_tokens": 8192,
-                "response_mime_type": "text/plain",
-            },
-            system_instruction="입력된 이미지에서 문자를 추출하시오. 추출한 문자를 적절한 코드 블럭 안에 넣으시오. 만약 문자가 파이썬 코드라면 # 이후의 문자는 추출하지 마시오. 띄어쓰기를 주의해서 작성하시오.",
-            safety_settings={
-                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-            }
-        )
-        file = genai.upload_file(filename)
-        response = model.generate_content(["추출할 이미지", file])
-        file.delete()
-        os.remove(filename)
-        return response.text
+    # async def image_to_text(self)->DiscordCommandResponse:
+    #     filename= f"{self.message.author.id}.{self.message.attachments[0].filename.split(".")[-1]}"
+    #     await self.message.attachments[0].save(filename)
+    #     model = genai.GenerativeModel(
+    #         model_name="gemini-1.5-pro-002",
+    #         generation_config = {
+    #             "temperature": 0.0,
+    #             "max_output_tokens": 8192,
+    #             "response_mime_type": "text/plain",
+    #         },
+    #         system_instruction="입력된 이미지에서 문자를 추출하시오. 추출한 문자를 적절한 코드 블럭 안에 넣으시오. 만약 문자가 파이썬 코드라면 # 이후의 문자는 추출하지 마시오. 띄어쓰기를 주의해서 작성하시오.",
+    #         safety_settings={
+    #             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+    #             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+    #         }
+    #     )
+    #     file = genai.upload_file(filename)
+    #     response = model.generate_content(["추출할 이미지", file])
+    #     file.delete()
+    #     os.remove(filename)
+    #     return response.text
 
     # async def yt_dlp(self)->DiscordCommandResponse:
     #     # os.chdir("utils")
@@ -313,29 +346,29 @@ class Commands:
     #     )
     #     return embed
     
-    async def gemini_change_instruction(self)->discord.Embed:
-        self.args.pop()
-        if len(self.message.attachments)==1:
-            file=self.message.attachments[0]
-            filename=f"{self.message.guild.id}.{file.filename.split(".")[-1]}"
-            await file.save(filename)
-            with open(filename, "r", encoding="utf-8") as opened_file:
-                instruction=opened_file.read()
-            await self.gemini.reset(id=self.message.guild.id, instruction=instruction)
+    # async def gemini_change_instruction(self)->discord.Embed:
+    #     self.args.pop()
+    #     if len(self.message.attachments)==1:
+    #         file=self.message.attachments[0]
+    #         filename=f"{self.message.guild.id}.{file.filename.split(".")[-1]}"
+    #         await file.save(filename)
+    #         with open(filename, "r", encoding="utf-8") as opened_file:
+    #             instruction=opened_file.read()
+    #         await self.gemini.reset(id=self.message.guild.id, instruction=instruction)
             
-        elif self.args==[]:
-            await self.gemini.reset(id=self.message.guild.id)
-        else:
-            await self.gemini.reset(id=self.message.guild.id, instruction=' '.join((self.args)))
-        embed=discord.Embed(
-            title="REBOT Gemini",
-            color=MAIN_COLOR
-        ).add_field(
-            name="프롬프트 변경 성공!",
-            value=self.gemini.sessions[self.message.guild.id].model.model_name
-                .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
-                .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
-                .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
-        )
-        return embed
+    #     elif self.args==[]:
+    #         await self.gemini.reset(id=self.message.guild.id)
+    #     else:
+    #         await self.gemini.reset(id=self.message.guild.id, instruction=' '.join((self.args)))
+    #     embed=discord.Embed(
+    #         title="REBOT Gemini",
+    #         color=MAIN_COLOR
+    #     ).add_field(
+    #         name="프롬프트 변경 성공!",
+    #         value=self.gemini.sessions[self.message.guild.id].model.model_name
+    #             .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
+    #             .replace("models/gemini-1.5-pro", "Gemini 1.5 Pro")
+    #             .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
+    #             .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
+    #     )
+    #     return embed

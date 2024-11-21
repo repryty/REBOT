@@ -4,6 +4,7 @@ import re
 
 BOT_TOKEN = os.getenv("REBOT_DISCORD_TOKEN")
 GEMINI_TOKEN = os.getenv("REBOT_GEMINI_TOKEN")
+CLAUDE_TOKEN = os.getenv("REBOT_CLAUDE_TOKEN")
 NEIS_TOKEN = os.getenv("REBOT_NEIS_TOKEN")
 
 ADMIN_ID = [

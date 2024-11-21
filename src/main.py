@@ -3,6 +3,7 @@ import discord
 import os
 import asyncio
 import google.generativeai as genai
+from dotenv import load_dotenv
 
 # Modules
 from config import *
@@ -16,8 +17,10 @@ intents.message_content = True
 
 # Bot
 client = discord.Bot(intents=intents)
-gemini=Gemini(generation_config=generation_config)
+gemini=Claude()
 commands=Commands([], discord.Message, client, gemini)
+
+load_dotenv()
 
 async def gemini_worker():
     while True:
@@ -27,7 +30,7 @@ async def gemini_worker():
                 if len(gemini.queue[i])>0:
                     response, msg = await gemini.call(i)
                     if isinstance(response, str):
-                        await signal(f"{gemini.sessions[i].model.model_name}, {response}")
+                        await signal(f"{gemini.sessions[i][-1]["content"]}, {response}")
                     else:
                         await msg.edit(content="", embed=response)
         except Exception as e:
@@ -44,7 +47,7 @@ async def on_ready():
     await client.change_presence(activity=activity)
     await signal("REBOT is online.")
     await asyncio.sleep(1)
-    activity = discord.Game(name="ㄹ 도움")
+    activity = discord.Game(name="호출어: ㅋ")
     await client.change_presence(activity=activity)
     for f in genai.list_files():
         f.delete()
@@ -75,7 +78,7 @@ async def slash_model(ctx: discord.ApplicationContext, model: discord.Option(
 
 @client.listen()
 async def on_message(message: discord.Message):
-    if not message.content.startswith("ㄹ "): return
+    if not message.content.startswith("ㅋ "): return
     is_admin=message.author.id in ADMIN_ID
     await signal(f"{message.author} [is_admin={is_admin}] : {message.content[2:]}")
 
