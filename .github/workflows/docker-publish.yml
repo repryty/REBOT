@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - claude
 
 env:
   REGISTRY: ghcr.io
@@ -36,8 +37,8 @@ jobs:
       - name: Build Docker image
         shell: bash
         run: |
-          docker build -t ghcr.io/repryty/rebot-6:latest .
+          docker build -t ghcr.io/repryty/rebot-6:claude .
       - name: Push Docker image
         shell: bash
         run: |
-          docker push ghcr.io/repryty/rebot-6:latest
+          docker push ghcr.io/repryty/rebot-6:claudr
