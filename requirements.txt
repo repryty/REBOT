@@ -41,6 +41,7 @@ multidict==6.1.0
 nest-asyncio==1.6.0
 packaging==24.2
 parso==0.8.4
+pip==23.2.1
 platformdirs==4.3.6
 prompt_toolkit==3.0.48
 propcache==0.2.0
@@ -57,7 +58,6 @@ Pygments==2.18.0
 pyparsing==3.2.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
-pywin32==308
 pyzmq==26.2.0
 requests==2.32.3
 rsa==4.9
