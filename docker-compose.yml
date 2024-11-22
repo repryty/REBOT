@@ -3,7 +3,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./dockerfile
-    image: ghcr.io/repryty/rebot-6
+    image: ghcr.io/repryty/rebot-6:claude
     restart: always
     logging:
       driver: local
