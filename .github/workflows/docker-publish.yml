@@ -41,4 +41,4 @@ jobs:
       - name: Push Docker image
         shell: bash
         run: |
-          docker push ghcr.io/repryty/rebot-6:claudr
+          docker push ghcr.io/repryty/rebot-6:claude
