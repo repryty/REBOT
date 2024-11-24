@@ -16,7 +16,7 @@ class Gemini:
         self.queue={}
         self.sessions: dict[ list[genai.GenerativeModel] ]={}
         self.files: dict[ list ] = {}
-        self.generation_config=generation_config
+        self.generation_config=DEFAULT_GENERATION_CONFIG
         self.system_instruction = dict()
 
     async def push(self, ctx:discord.Message, id: int, msg: discord.Message)->None:
@@ -44,6 +44,8 @@ class Gemini:
                 print(f"deleted {i.name}")
                 i.delete()
         self.files[id]=[]
+
+        self.generation_config=DEFAULT_GENERATION_CONFIG
 
     async def change_model(self, id: int, model: str)->None:
         if self.sessions.get(id)==None:
@@ -78,7 +80,6 @@ class Gemini:
                 print(1)
             # print(content)
             response = self.sessions[id].send_message(content, stream=True)
-
             responses = ""
             for chunk in response:
                 responses += make_emoji(chunk.text)
@@ -104,6 +105,9 @@ class Gemini:
             ).add_field(name="Gemini API 사용량 제한 초과", value="Gemini 1.5 Flash를 사용하거나, 잠시 기다려주세요.")
             return [embed, msg]
         
+    async def set_temp(self, temp: int)->None:
+        self.generation_config["TEMPERATURE"] = temp
+        
 class Commands:
     def __init__(self, args: list[str], message: discord.Message, client: discord.Client, gemini=Gemini) -> None:
         self.args = args
@@ -122,7 +126,9 @@ class Commands:
             "프롬프트": self.gemini_change_instruction,
             "빈칸": self.make_test,
             "텍스트추출": self.image_to_text,
-            "명령어": self.get_commands_list
+            "명령어": self.get_commands_list,
+            "temp": self.set_temp,
+            "d": self.dice
         }
 
     async def get_commands_list(self)-> DiscordCommandResponse:
@@ -150,6 +156,9 @@ class Commands:
             return f"```{result}```"
         except Exception as e:
             return f"오류 발생: {e}"
+
+    async def dice(self):
+        return f"🎲! {random.randint(1, int(self.args[0]))}!"
     
     async def gemini_reset(self) -> DiscordCommandResponse:
         await self.gemini.reset(id=self.message.guild.id)
@@ -270,6 +279,13 @@ class Commands:
         file.delete()
         os.remove(filename)
         return response.text
+    
+
+    async def set_temp(self)->DiscordCommandResponse:
+        self.args.pop()
+        temp = float(self.args.pop(0))
+        self.gemini.set_temp(temp)
+        return discord.Embed(title="REEBOT Gemini", color=MAIN_COLOR, description=f"성공적으로 temperature가 {temp}로 변경되었습니다!")
 
     # async def yt_dlp(self)->DiscordCommandResponse:
     #     # os.chdir("utils")

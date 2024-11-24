@@ -26,7 +26,7 @@ EMOJI = {
     r"😢": "<:sad:1144857284112040026>",
 }
 
-generation_config = {
+DEFAULT_GENERATION_CONFIG = {
     "temperature": 1.2,
     "max_output_tokens": 8192,
     "response_mime_type": "text/plain",
