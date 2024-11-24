@@ -168,15 +168,8 @@ class Commands:
         
     async def gemini_change_model(self) -> DiscordCommandResponse:
         print(self.args)
-        if self.args[0]=="pro":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-002")
-            using="Gemini 1.5 Pro 002"
-        elif self.args[0]=="flash":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
-            using="Gemini 1.5 Flash"
-        elif self.args[0]=="ex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-exp-1121")
-            using="Gemini Experimental 1121"
+        if len(self.args[0])>0: 
+            await self.gemini.change_model(self.message.guild.id, self.args[0])
         else:
             try:
                 embed=discord.Embed(
@@ -185,10 +178,6 @@ class Commands:
                 ).add_field(
                     name="현재 사용중인 모델",
                     value=self.gemini.sessions[self.message.guild.id].model.model_name
-                        .replace("models/gemini-1.5-pro-exp-0827", "Gemini 1.5 Pro Experimental 0827")
-                        .replace("models/gemini-1.5-pro-002", "Gemini 1.5 Pro 002")
-                        .replace("models/gemini-1.5-flash", "Gemini 1.5 Flash")
-                        .replace("models/gemini-1.5-flash-exp-0827", "Gemini 1.5 Flash Experimental 0827")
                 )
             except:
                 embed=discord.Embed(
@@ -204,7 +193,7 @@ class Commands:
             color=MAIN_COLOR
         ).add_field(
             name="모델이 성공적으로 변경되었습니다!",
-            value=using
+            value=self.args[0]
         )
         return embed
     
