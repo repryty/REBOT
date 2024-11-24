@@ -174,12 +174,9 @@ class Commands:
         elif self.args[0]=="flash":
             await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash")
             using="Gemini 1.5 Flash"
-        elif self.args[0]=="flashex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-flash-exp-0827")
-            using="Gemini 1.5 Flash Experimental 0827"
-        elif self.args[0]=="proex":
-            await self.gemini.change_model(self.message.guild.id, "gemini-1.5-pro-exp-0827")
-            using="Gemini 1.5 Pro Experimental 0827"
+        elif self.args[0]=="ex":
+            await self.gemini.change_model(self.message.guild.id, "gemini-exp-1121")
+            using="Gemini Experimental 1121"
         else:
             try:
                 embed=discord.Embed(
