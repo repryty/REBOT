@@ -33,6 +33,7 @@ DEFAULT_GENERATION_CONFIG = {
 }
 
 DEFAULT_SYSTEM_INSTRUCTION = open("system_instruction/system_instruction.txt", "r", encoding="utf-8").read()
+ENGLISH_SYSTEM_INSTRUCTION = open("system_instruction/english_teach.txt", "r", encoding="utf-8").read()
 system_instruction = DEFAULT_SYSTEM_INSTRUCTION
 
 def make_emoji(ctx: str | None)->str:

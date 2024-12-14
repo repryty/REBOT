@@ -128,7 +128,8 @@ class Commands:
             "텍스트추출": self.image_to_text,
             "명령어": self.get_commands_list,
             "temp": self.set_temp,
-            "d": self.dice
+            "d": self.dice,
+            "영어": self.english_teacher
         }
 
     async def get_commands_list(self)-> DiscordCommandResponse:
@@ -278,6 +279,37 @@ class Commands:
         response = model.generate_content(["추출할 이미지", file])
         file.delete()
         os.remove(filename)
+        return response.text
+
+    async def english_teacher(self)->DiscordCommandResponse:
+        self.args.pop()
+        model = genai.GenerativeModel(
+            model_name="gemini-2.0-flash-exp",
+            generation_config = {
+                "temperature": 0.0,
+                "max_output_tokens": 8192,
+                "response_mime_type": "text/plain",
+            },
+            system_instruction=ENGLISH_SYSTEM_INSTRUCTION,
+            safety_settings={
+                HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+                HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            }
+        )
+        if len(self.message.attachments)>0:
+            filename= f"{self.message.author.id}.{self.message.attachments[0].filename.split(".")[-1]}"
+            await self.message.attachments[0].save(filename)
+            file = genai.upload_file(filename)
+            response = model.generate_content([" ".join(self.args), file])
+            file.delete()
+            os.remove(filename)
+        else:
+            response = model.generate_content([" ".join(self.args)])
+        while len(response.text)>1900:
+            self.message.channel.send(response.text[:1900])
+            response.text=response.text[1901:]
         return response.text
     
 
